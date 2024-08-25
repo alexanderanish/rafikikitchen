@@ -42,7 +42,7 @@ export default function AdminDashboard() {
         } else {
           throw new Error(data.error || 'Failed to fetch orders')
         }
-      } catch (error) {
+      } catch (error:any) {
         toast({
           title: "Error",
           description: error.message,

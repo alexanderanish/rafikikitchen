@@ -33,7 +33,7 @@ type MenuStore = {
   setSearchQuery: (query: string) => void
   checkoutInfo: CheckoutInfo
   setCheckoutInfo: (info: Partial<CheckoutInfo>) => void
-  placeOrder: () => void
+  placeOrder: () => any
 }
 
 export const useMenuStore = create<MenuStore>((set, get) => ({
@@ -108,7 +108,7 @@ export const useMenuStore = create<MenuStore>((set, get) => ({
       } else {
         throw new Error(data.error || 'An error occurred while processing your order.')
       }
-    } catch (error) {
+    } catch (error:any) {
       console.error('Error placing order:', error)
       return { success: false, error: error.message }
     }

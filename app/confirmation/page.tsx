@@ -4,7 +4,9 @@ import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { CheckCircle } from 'lucide-react'
 
-export default function Confirmation() {
+import { Suspense } from 'react'
+
+const ConfirmationContent = () => {
   const searchParams = useSearchParams()
   const orderId = searchParams.get('orderId')
 
@@ -19,5 +21,13 @@ export default function Confirmation() {
         Back to Home
       </Link>
     </div>
+  )
+}
+
+export default function Confirmation() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ConfirmationContent />
+    </Suspense>
   )
 }

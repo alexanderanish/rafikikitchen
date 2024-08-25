@@ -17,6 +17,7 @@ export default function Checkout() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   useEffect(() => {
     setCheckoutInfo({ date: '30-06-2024' })
+    //eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -29,7 +30,7 @@ export default function Checkout() {
       } else {
         throw new Error(result.error)
       }
-    } catch (error) {
+    } catch (error:any) {
       toast({
         title: "Error",
         description: error.message || "An error occurred while placing your order. Please try again.",
