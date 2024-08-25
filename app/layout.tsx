@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import localFont from 'next/font/local'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import Head from "next/head";
 
 const inter = Inter({ subsets: ['latin'] })
 // const anvir = localFont({
@@ -84,6 +85,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+
       <body className={`${inter.className} min-h-screen flex flex-col bg-stone-50`}>
         <Header />
         <main className="flex-grow">{children}</main>

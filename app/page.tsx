@@ -1,10 +1,11 @@
 import Image from 'next/image'
 import Link from 'next/link'
-
+import VerticalVideoPlayer from '@/components/VideoPlayer'
+//https://youtube.com/shorts/CL1ijLytk2I?feature=share
 export default function Home() {
   return (
     <div className="container mx-auto px-4 py-8">
-      <section className="mb-12">
+      {/* <section className="mb-12">
         <h1 className="text-4xl font-bold mb-4">Welcome to Rafiki&apos;s Kitchen</h1>
         <p className="text-xl mb-6">Artisanal sandwiches crafted with love and care.</p>
         <Link href="/menu" className="bg-stone-800 text-white px-6 py-3 rounded-md inline-block hover:bg-stone-700 transition-colors">
@@ -51,7 +52,9 @@ export default function Home() {
         <p className="text-sm text-yellow-800">
           <strong>Note:</strong> Customers will need to book a delivery service to pick up their order at the selected slot.
         </p>
-      </div>
+      </div> */}
+      <VerticalVideoPlayer src="CL1ijLytk2I" isYouTube />
+      {/* <VerticalVideoPlayer src="/RafikiLaunch_Final.MOV" /> */}
     </div>
   )
 }
