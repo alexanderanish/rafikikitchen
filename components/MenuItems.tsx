@@ -56,7 +56,7 @@ function Carousel({ images }: { images: string[] }) {
         <div className="flex transition-transform duration-300 ease-in-out" style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
           {images.map((image, index) => (
             <div key={index} className="w-full flex-shrink-0">
-              <Image src={image} alt={`Slide ${index + 1}`} width={400} height={300} className="w-full h-64 object-cover" />
+              <Image src={image} alt={`Slide ${index + 1}`} width={400} height={400}  className="w-full h-64 object-cover" />
             </div>
           ))}
         </div>
