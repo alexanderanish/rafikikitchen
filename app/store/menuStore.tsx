@@ -9,6 +9,7 @@ type MenuItem = {
   video?: string
   vegetarian: boolean
   ingredients: string[]
+  allergens: string[]
 }
 
 type CartItem = MenuItem & { quantity: number }

@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { useMenuStore } from '@/app/store/menuStore'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { PlusCircle, MinusCircle, ChevronLeft, ChevronRight, ShoppingCart } from 'lucide-react'
+import { PlusCircle, MinusCircle, ChevronLeft, ChevronRight, ShoppingCart, AlertTriangle } from 'lucide-react'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
@@ -16,6 +16,7 @@ const menuItems = [
     price: 400,
     images: ['/pork_1.jpg', '/pork_2.jpg', '/pork_3.jpg'],
     vegetarian: false,
+    allergens:["Pork", "Egg", "Mustard Seeds"],
     ingredients: ['Pork Solantulem (Kokum)', 'Homemade Mayonaise', 'Kasundi Mustard', 'Cucumber', 'Lettuce leaves', 'Spiced Apple Jam', 'Baguette'],
   },
   {
@@ -25,6 +26,7 @@ const menuItems = [
     price: 400,
     images: ['/chicken_1.jpg', '/chicken_2.jpg', '/chicken_3.jpg','/chicken_4.jpg', '/chicken_5.jpg', '/chicken_6.jpg'],
     vegetarian: false,
+    allergens:["Lemongrass", "Chicken", "Fish Sauce", "Soy Sauce", "Curd"],
     ingredients: ['Green Chilli and Lemongrass Chicken', 'Pickled Carrot and Radish', 'Salted Cucumber', 'Lemongrass Labneh', 'Fish Sauce', 'Soy Sauce', 'Baguette'],
   },
   {
@@ -34,6 +36,7 @@ const menuItems = [
     price: 350,
     images: ['/veg_1.jpg', '/veg_2.jpg', '/veg_3.jpg', '/veg_4.jpg'],
     vegetarian: true,
+    allergens:["Eggplant", "Sesame Seeds", "Chickpeas", "Milk", "Curd" ],
     ingredients: ['Baked Tahini Eggplant', 'Hummus', 'Labneh', 'Garlic Toum', 'Spiced Tomato Jam', 'Mozarella','Basil Leaves','Baguette'],
   },
 ]
@@ -83,6 +86,17 @@ function VegIndicator({ isVegetarian }: { isVegetarian: boolean }) {
   )
 }
 
+function AllergenInfo({ allergens }: { allergens: string[] }) {
+  return (
+    <div className="flex items-center mt-2">
+      {/* <AlertTriangle className="w-4 h-4 text-yellow-500 mr-2" /> */}
+      <span className="text-sm text-gray-600">
+        Contains: {allergens.join(', ')}
+      </span>
+    </div>
+  )
+}
+
 export default function MenuItems() {
   const { selectedItem, setSelectedItem, cart, addToCart, removeFromCart, searchQuery, cartCount } = useMenuStore()
 
@@ -118,6 +132,7 @@ export default function MenuItems() {
                     View Details
                   </button>
                 </p>
+                <AllergenInfo allergens={item.allergens} />
                 <div className="flex justify-between items-center">
                   <span className="text-lg font-medium">₹{item.price.toFixed(2)}</span>
                   <div className="flex items-center space-x-2">
@@ -160,29 +175,25 @@ export default function MenuItems() {
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>{selectedItem?.name}</DialogTitle>
-            <DialogDescription>{selectedItem?.description}</DialogDescription>
+            {/* <DialogDescription>{selectedItem?.description}</DialogDescription> */}
           </DialogHeader>
           <div className="py-4">
             {selectedItem && <Carousel images={selectedItem.images} />}
-            {/* {selectedItem?.video && (
-              <video controls className="w-full mt-4 rounded-lg">
-                <source src={selectedItem.video} type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-            )} */}
+
+            <DialogDescription className="text-justify pt-4">{selectedItem?.description}</DialogDescription>
             <h4 className="font-medium mt-4 mb-2">Ingredients:</h4>
             <ul className="list-disc list-inside">
               {selectedItem?.ingredients.map((ingredient, index) => (
                 <li key={index} className="text-sm">{ingredient}</li>
               ))}
             </ul>
+            <AllergenInfo allergens={selectedItem?.allergens || []} />
             <div className="flex justify-between items-center mb-2">
               <p className="text-sm mt-2">
                 {selectedItem?.vegetarian ? 'Vegetarian' : 'Non-vegetarian'}
               </p>
               <VegIndicator isVegetarian={selectedItem?.vegetarian ?? false} />
             </div>
-            
           </div>
           <DialogFooter className="sm:justify-between">
             <Button onClick={() => setSelectedItem(null)} variant="outline">
