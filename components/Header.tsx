@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Menu, X, Search, ShoppingCart } from 'lucide-react'
+import { Menu, X, Search, ShoppingCart, Instagram } from 'lucide-react'
 import { useMenuStore } from '@/app/store/menuStore'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
@@ -41,6 +41,11 @@ export default function Header() {
           </Link> */}
           <Link href="/menu" passHref>
             <Button className="hidden md:block" variant="ghost">Menu</Button>
+          </Link>
+          <Link href="https://www.instagram.com/rafiki.kitchen" passHref>
+            <Button variant="ghost">
+              <Instagram className="w-6 h-6" />
+            </Button>
           </Link>
 
           <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
