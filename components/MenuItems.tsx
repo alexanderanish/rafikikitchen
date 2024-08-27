@@ -114,9 +114,9 @@ export default function MenuItems() {
           const quantity = cartItem?.quantity || 0
 
           return (
-            <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+            <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
               <Carousel images={item.images} />
-              <div className="p-4">
+              <div className="p-4 flex-grow flex flex-col">
                 <div className="flex justify-between items-center mb-2">
                   <h2 className="text-xl font-semibold">{item.name}</h2>
                   <VegIndicator isVegetarian={item.vegetarian} />
@@ -133,7 +133,7 @@ export default function MenuItems() {
                   </button>
                 </p>
                 <AllergenInfo allergens={item.allergens} />
-                <div className="flex justify-between items-center">
+                <div className="mt-auto pt-4 flex justify-between items-center">
                   <span className="text-lg font-medium">₹{item.price.toFixed(2)}</span>
                   <div className="flex items-center space-x-2">
                     {quantity > 0 ? (

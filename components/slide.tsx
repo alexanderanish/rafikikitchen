@@ -7,12 +7,12 @@ import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 const slides = [
-  { id: 1, src: '/landing_page/1.jpeg', title:'Homemade Ingredients', alt: 'Baguette slides and ready for fillings' },
+  { id: 1, src: '/landing_page/9.png', title:'Farm Fresh Produce', alt: 'Baguette slides and ready for fillings' },
   { id: 2, src: '/landing_page/2.jpeg', title:'Built From Scratch', alt: 'Baguette slides and ready for fillings' },
-  { id: 3, src: '/landing_page/5.jpeg',title:'Designed and Tested With Care', alt: 'Weighed out Baguette Dough' },
-  { id: 4, src: '/landing_page/6.jpeg',title:'Unique Flavour Profiles', alt: 'Weighed out Baguette Dough' },
-  { id: 5, src: '/landing_page/7.jpeg',title:'Freshly Made', alt: 'Shaping the dough into Baguettes' },
-  { id: 6, src: '/landing_page/9.png', title:'Freshly Made',alt: 'Cross section view of the Jazz Sandwich' },
+  { id: 3, src: '/landing_page/5.jpeg',title:'Traditional Flavors with a Modern Twist', alt: 'Weighed out Baguette Dough' },
+  { id: 4, src: '/landing_page/6.jpeg',title:'A Culinary Crossroad of Flavors', alt: 'Weighed out Baguette Dough' },
+  { id: 5, src: '/landing_page/7.jpeg',title:'Crafted to Order', alt: 'Shaping the dough into Baguettes' },
+  { id: 6, src: '/landing_page/1.jpeg', title:'Baguettes, Fresh from the Oven',alt: 'Cross section view of the Jazz Sandwich' },
 ]
 
 const extra = [

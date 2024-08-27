@@ -143,7 +143,7 @@ export default function Checkout() {
         </form>
         <div className="mt-4 p-4 bg-yellow-100 rounded-md">
           <p className="text-sm text-yellow-800">
-            <strong>Note:</strong> You will need to book a delivery service to pick up your order at the selected slot.
+          <strong>Note:</strong> Customers will need to book a delivery service to pick up their order at the selected slot. (e.g. Dunzo, Swiggy Genie, Porter, etc)
           </p>
         </div>
       </div>
