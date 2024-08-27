@@ -74,11 +74,11 @@ function VegIndicator({ isVegetarian }: { isVegetarian: boolean }) {
   const color = isVegetarian ? 'green' : 'red'
   return (
     <div 
-      className={`flex items-center justify-center w-6 h-6 border-2 border-${color}-500 rounded-sm`}
+      className={`flex items-center justify-center w-6 h-6 border-2 ${color === 'green' ? 'border-green-500' : 'border-red-500'} rounded-sm`}
       title={isVegetarian ? 'Vegetarian' : 'Non-vegetarian'}
       aria-label={isVegetarian ? 'Vegetarian' : 'Non-vegetarian'}
     >
-      <div className={`w-3 h-3 rounded-full bg-${color}-500`} />
+      <div className={`w-3 h-3 rounded-full ${color === 'green' ? 'bg-green-500' : 'bg-red-500'}`} />
     </div>
   )
 }
