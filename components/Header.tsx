@@ -36,9 +36,9 @@ export default function Header() {
           <Link href="/" passHref>
             <Button className="hidden md:block" variant="ghost">Home</Button>
           </Link>
-          <Link href="/about" passHref>
+          {/* <Link href="/about" passHref>
             <Button className="hidden md:block" variant="ghost">About</Button>
-          </Link>
+          </Link> */}
           <Link href="/menu" passHref>
             <Button className="hidden md:block" variant="ghost">Menu</Button>
           </Link>
@@ -107,7 +107,7 @@ export default function Header() {
           <ul className="container mx-auto px-4 py-2 space-y-2">
             <li><Link href="/" passHref className="block py-2 text-center">Home</Link></li>
             <li><Link href="/menu" passHref className="block py-2 text-center">Menu</Link></li>
-            <li><Link href="/about" passHref className="block py-2 text-center">About</Link></li>
+            {/* <li><Link href="/about" passHref className="block py-2 text-center">About</Link></li> */}
             {/* <li><Link href="/contact" className="block py-2 text-center">Contact</Link></li> */}
           </ul>
           {/* <div className="px-4 py-2">
