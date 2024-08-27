@@ -4,34 +4,34 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from "@/components/ui/button"
-import { Menu, X, ShoppingCart, ChevronLeft, ChevronRight } from 'lucide-react'
-import { useMenuStore } from '@/app/store/menuStore'
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 const slides = [
-  { id: 1, src: '/landing_page/1.jpeg', alt: 'Delicious sandwich 1' },
-  { id: 2, src: '/landing_page/2.jpeg', alt: 'Freshly prepared ingredients' },
-  { id: 3, src: '/landing_page/3.jpeg', alt: 'Our kitchen in action' },
-  { id: 4, src: '/landing_page/4.jpeg', alt: 'Happy customers enjoying our food' },
-  { id: 5, src: '/landing_page/5.jpeg', alt: 'Delicious sandwich 2' },
-  { id: 6, src: '/landing_page/6.jpeg', alt: 'Freshly baked bread' },
-  { id: 7, src: '/landing_page/7.jpeg', alt: 'Our kitchen in action' },
-  { id: 8, src: '/landing_page/8.jpeg', alt: 'Happy customers enjoying our food' },
-  { id: 9, src: '/landing_page/9.png', alt: 'Delicious sandwich 3' },
-  { id: 10, src: '/landing_page/10.jpeg', alt: 'Freshly baked bread' },
-  { id: 11, src: '/landing_page/11.jpeg', alt: 'Our kitchen in action' },
-  { id: 12, src: '/landing_page/12.jpeg', alt: 'Happy customers enjoying our food' },
-  { id: 13, src: '/landing_page/13.jpeg', alt: 'Delicious sandwich 4' },
-  { id: 14, src: '/landing_page/14.jpeg', alt: 'Freshly baked bread' },
-  { id: 15, src: '/landing_page/15.jpeg', alt: 'Our kitchen in action' },
-  { id: 16, src: '/landing_page/16.jpeg', alt: 'Happy customers enjoying our food' },
-  { id: 17, src: '/landing_page/17.jpeg', alt: 'Delicious sandwich 5' },
+  { id: 1, src: '/landing_page/1.jpeg', alt: 'Baguette slides and ready for fillings' },
+  { id: 2, src: '/landing_page/2.jpeg', alt: 'Baguette slides and ready for fillings' },
+  { id: 3, src: '/landing_page/5.jpeg', alt: 'Delicious sandwich 2' },
+  { id: 4, src: '/landing_page/6.jpeg', alt: 'Freshly baked bread' },
+  { id: 5, src: '/landing_page/7.jpeg', alt: 'Our kitchen in action' },
+  { id: 6, src: '/landing_page/9.png', alt: 'Delicious sandwich 3' },
+  
+]
+
+const extra = [
+
+  { id: 7, src: '/landing_page/3.jpeg', alt: 'Our kitchen in action' },
+  { id: 8, src: '/landing_page/15.jpeg', alt: 'Our kitchen in action' },
+  { id: 9, src: '/landing_page/4.jpeg', alt: 'Happy customers enjoying our food' },
+  { id: 10, src: '/landing_page/8.jpeg', alt: 'Happy customers enjoying our food' },
+  { id: 11, src: '/landing_page/10.jpeg', alt: 'Freshly baked bread' },
+  { id: 12, src: '/landing_page/11.jpeg', alt: 'Our kitchen in action' },
+  { id: 13, src: '/landing_page/12.jpeg', alt: 'Happy customers enjoying our food' },
+  { id: 14, src: '/landing_page/13.jpeg', alt: 'Delicious sandwich 4' },
+  { id: 15, src: '/landing_page/14.jpeg', alt: 'Freshly baked bread' },
+  
 ]
 
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0)
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const { cart, cartCount, removeFromCart, isCartOpen, setIsCartOpen } = useMenuStore()
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -65,14 +65,16 @@ export default function Home() {
               }`}
             >
               <Image
-                src={slide.src}
-                alt={slide.alt}
-                layout="fill"
-                objectFit="cover"
-                priority={index === 0}
-              />
+              src={slide.src}
+              alt={slide.alt}
+              fill
+              sizes="100vw"
+              style={{ objectFit: 'cover' }}
+              priority={index === 0}
+            />
             </div>
           ))}
+         
         </div>
 
         <button
