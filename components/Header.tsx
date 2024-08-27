@@ -24,13 +24,24 @@ export default function Header() {
           </span>
         </Link>
         <div className="flex items-center space-x-4">
-          <Input
+          {/* <Input
             type="search"
             placeholder="Search menu..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-64 hidden md:block"
-          />
+          /> */}
+          
+          
+          <Link href="/" passHref>
+            <Button className="hidden md:block" variant="ghost">Home</Button>
+          </Link>
+          <Link href="/about" passHref>
+            <Button className="hidden md:block" variant="ghost">About</Button>
+          </Link>
+          <Link href="/menu" passHref>
+            <Button className="hidden md:block" variant="ghost">Menu</Button>
+          </Link>
 
           <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
             <SheetTrigger asChild>
@@ -94,12 +105,12 @@ export default function Header() {
       {isMenuOpen && (
         <nav className="md:hidden bg-white border-t">
           <ul className="container mx-auto px-4 py-2 space-y-2">
-            <li><Link href="/" className="block py-2 text-center">Home</Link></li>
-            <li><Link href="/menu" className="block py-2 text-center">Menu</Link></li>
-            <li><Link href="/about" className="block py-2 text-center">About</Link></li>
-            <li><Link href="/contact" className="block py-2 text-center">Contact</Link></li>
+            <li><Link href="/" passHref className="block py-2 text-center">Home</Link></li>
+            <li><Link href="/menu" passHref className="block py-2 text-center">Menu</Link></li>
+            <li><Link href="/about" passHref className="block py-2 text-center">About</Link></li>
+            {/* <li><Link href="/contact" className="block py-2 text-center">Contact</Link></li> */}
           </ul>
-          <div className="px-4 py-2">
+          {/* <div className="px-4 py-2">
             <Input
               type="search"
               placeholder="Search menu..."
@@ -107,7 +118,7 @@ export default function Header() {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full"
             />
-          </div>
+          </div> */}
         </nav>
       )}
     </header>

@@ -13,7 +13,6 @@ const slides = [
   { id: 4, src: '/landing_page/6.jpeg', alt: 'Freshly baked bread' },
   { id: 5, src: '/landing_page/7.jpeg', alt: 'Our kitchen in action' },
   { id: 6, src: '/landing_page/9.png', alt: 'Delicious sandwich 3' },
-  
 ]
 
 const extra = [
