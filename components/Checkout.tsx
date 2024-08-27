@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "@/components/ui/use-toast"
 import OrderSummary from './OrderSummary'
 import { useEffect } from 'react'
+import { PhoneInput } from './PhoneInput'
 
 export default function Checkout() {
   const router = useRouter()
@@ -65,7 +66,7 @@ export default function Checkout() {
               required
             />
           </div>
-          <div className="mb-4">
+          {/* <div className="mb-4">
             <Label htmlFor="phone">Phone Number</Label>
             <Input
               id="phone"
@@ -74,7 +75,12 @@ export default function Checkout() {
               onChange={(e) => setCheckoutInfo({ phone: e.target.value })}
               required
             />
-          </div>
+            
+          </div> */}
+          <PhoneInput
+            value={checkoutInfo.phone}
+            onChange={(value) => setCheckoutInfo({ ...checkoutInfo, phone: value })}
+          />
           <div className="mb-4">
             <Label htmlFor="date">Date</Label>
             <Select value='30-06-2024' disabled>  
