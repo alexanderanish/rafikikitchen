@@ -12,30 +12,29 @@ const menuItems = [
   {
     id: 1,
     name: 'Nala',
-    description: 'Pork Solantulem with Mayonaise, Mustard, Arugula and Tomato Jam',
+    description: "The Nala features pork solantulem from Nihal's mum's recipe, cooked with kokum and spices. The sandwich is balanced with spicy Kasundi mustard, sweet apple jam, salted cucumber, lettuce, and creamy homemade mayonnaise.",
     price: 400,
     images: ['/pork_1.jpg', '/pork_2.jpg', '/pork_3.jpg'],
-    video: '/placeholder-video.mp4',
     vegetarian: false,
-    ingredients: ['Pork', 'Kokum', 'Mayonaise', 'Mustard', 'Cucumber', 'Arugula', 'Tomato Jam', 'Baguette'],
+    ingredients: ['Pork Solantulem (Kokum)', 'Homemade Mayonaise', 'Kasundi Mustard', 'Cucumber', 'Lettuce leaves', 'Spiced Apple Jam', 'Baguette'],
   },
   {
     id: 2,
     name: 'Rafiki',
-    description: 'Grilled lemon grass chicken with pickled carrot and radish',
+    description: "If you love lemongrass, this sandwich is for you. It includes grilled chicken in a green chilli and lemongrass marinade, lemongrass labneh, pickled carrots, radish, salted cucumbers, and basil leaves for a punchy, spicy flavor.",
     price: 400,
     images: ['/chicken_1.jpg', '/chicken_2.jpg', '/chicken_3.jpg','/chicken_4.jpg', '/chicken_5.jpg', '/chicken_6.jpg'],
-    vegetarian: true,
-    ingredients: ['Chicken', 'Lemongrass', 'Pickled Carrot and Radish', 'Basil', 'Green Chilly', 'Fish Sauce', 'Soy Sauce', 'Baguette'],
+    vegetarian: false,
+    ingredients: ['Green Chilli and Lemongrass Chicken', 'Pickled Carrot and Radish', 'Salted Cucumber', 'Lemongrass Labneh', 'Fish Sauce', 'Soy Sauce', 'Baguette'],
   },
   {
     id: 3,
     name: 'Jazz',
-    description: 'Baked Tahini Eggplant with Hummus, motzerella cheese and tomato',
+    description: "The Jazz is a vegetarian Middle Eastern sandwich with smoky baked tahini eggplant, homemade hummus, labneh, garlic toum, spiced tomato jam, basil leaves, and homemade mozzarella.",
     price: 350,
     images: ['/veg_1.jpg', '/veg_2.jpg', '/veg_3.jpg', '/veg_4.jpg'],
-    vegetarian: false,
-    ingredients: ['Eggplant', 'Avocado', 'Lettuce', 'Tomato', 'Chipotle Mayo', 'Whole Wheat Bun'],
+    vegetarian: true,
+    ingredients: ['Baked Tahini Eggplant', 'Hummus', 'Labneh', 'Garlic Toum', 'Spiced Tomato Jam', 'Mozarella','Basil Leaves','Baguette'],
   },
 ]
 
@@ -71,6 +70,19 @@ function Carousel({ images }: { images: string[] }) {
   )
 }
 
+function VegIndicator({ isVegetarian }: { isVegetarian: boolean }) {
+  const color = isVegetarian ? 'green' : 'red'
+  return (
+    <div 
+      className={`flex items-center justify-center w-6 h-6 border-2 border-${color}-500 rounded-sm`}
+      title={isVegetarian ? 'Vegetarian' : 'Non-vegetarian'}
+      aria-label={isVegetarian ? 'Vegetarian' : 'Non-vegetarian'}
+    >
+      <div className={`w-3 h-3 rounded-full bg-${color}-500`} />
+    </div>
+  )
+}
+
 export default function MenuItems() {
   const { selectedItem, setSelectedItem, cart, addToCart, removeFromCart, searchQuery, cartCount } = useMenuStore()
 
@@ -91,7 +103,10 @@ export default function MenuItems() {
             <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden">
               <Carousel images={item.images} />
               <div className="p-4">
-                <h2 className="text-xl font-semibold mb-2">{item.name}</h2>
+                <div className="flex justify-between items-center mb-2">
+                  <h2 className="text-xl font-semibold">{item.name}</h2>
+                  <VegIndicator isVegetarian={item.vegetarian} />
+                </div>
                 <p className="text-stone-600 mb-2">
                   {item.description}{' '}
                 </p>
@@ -161,9 +176,13 @@ export default function MenuItems() {
                 <li key={index} className="text-sm">{ingredient}</li>
               ))}
             </ul>
-            <p className="text-sm mt-2">
-              {selectedItem?.vegetarian ? 'Vegetarian' : 'Non-vegetarian'}
-            </p>
+            <div className="flex justify-between items-center mb-2">
+              <p className="text-sm mt-2">
+                {selectedItem?.vegetarian ? 'Vegetarian' : 'Non-vegetarian'}
+              </p>
+              <VegIndicator isVegetarian={selectedItem?.vegetarian ?? false} />
+            </div>
+            
           </div>
           <DialogFooter className="sm:justify-between">
             <Button onClick={() => setSelectedItem(null)} variant="outline">

@@ -7,12 +7,12 @@ import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 const slides = [
-  { id: 1, src: '/landing_page/1.jpeg', alt: 'Baguette slides and ready for fillings' },
-  { id: 2, src: '/landing_page/2.jpeg', alt: 'Baguette slides and ready for fillings' },
-  { id: 3, src: '/landing_page/5.jpeg', alt: 'Delicious sandwich 2' },
-  { id: 4, src: '/landing_page/6.jpeg', alt: 'Freshly baked bread' },
-  { id: 5, src: '/landing_page/7.jpeg', alt: 'Our kitchen in action' },
-  { id: 6, src: '/landing_page/9.png', alt: 'Delicious sandwich 3' },
+  { id: 1, src: '/landing_page/1.jpeg', title:'Homemade Ingredients', alt: 'Baguette slides and ready for fillings' },
+  { id: 2, src: '/landing_page/2.jpeg', title:'Built From Scratch', alt: 'Baguette slides and ready for fillings' },
+  { id: 3, src: '/landing_page/5.jpeg',title:'Designed and Tested With Care', alt: 'Weighed out Baguette Dough' },
+  { id: 4, src: '/landing_page/6.jpeg',title:'Unique Flavour Profiles', alt: 'Weighed out Baguette Dough' },
+  { id: 5, src: '/landing_page/7.jpeg',title:'Freshly Made', alt: 'Shaping the dough into Baguettes' },
+  { id: 6, src: '/landing_page/9.png', title:'Freshly Made',alt: 'Cross section view of the Jazz Sandwich' },
 ]
 
 const extra = [
@@ -71,6 +71,10 @@ export default function Home() {
               style={{ objectFit: 'cover' }}
               priority={index === 0}
             />
+            <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center text-white text-center">
+              <h2 className="text-4xl md:text-6xl font-bold mb-4">{slide.title}</h2>
+              {/* <p className="text-xl md:text-2xl mb-8">{slide.description}</p> */}
+            </div>
             </div>
           ))}
          
