@@ -14,7 +14,7 @@ type Order = {
   checkoutInfo: {
     name: string
     phone: string
-    timeSlot: string
+    time_slot: string
   }
   createdAt: string
   status: string
@@ -190,7 +190,7 @@ export default function AdminDashboard() {
             <p className="mb-2">Date: {new Date(order.createdAt).toLocaleString()}</p>
             <p className="mb-2">Customer: {order.checkoutInfo.name}</p>
             <p className="mb-2">Phone: {order.checkoutInfo.phone}</p>
-            <p className="mb-4">Time Slot: {order.checkoutInfo.timeSlot}</p>
+            <p className="mb-4">Time Slot: {order.checkoutInfo.time_slot}</p>
             <div className="mb-4">
               <label htmlFor={`status-${order._id}`} className="block text-sm font-medium text-gray-700">Status</label>
               <Select onValueChange={(value) => handleStatusChange(order._id, value)} defaultValue={order.status}>
