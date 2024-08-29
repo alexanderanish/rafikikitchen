@@ -95,7 +95,7 @@ export default function Checkout() {
                   <div className="flex items-start gap-3">
                     <div className="grid gap-0.5">
                       <p>
-                      Saturday, 30th August, 2024
+                      Saturday, 31th August, 2024
                       </p>
                     </div>
                   </div>
