@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "@/components/ui/use-toast"
+import OrderSummaryDashboard from '@/components/OrderSummaryDashboard'
 
 type Order = {
   _id: string
@@ -182,6 +183,7 @@ export default function AdminDashboard() {
           <Button onClick={handleLogout}>Logout</Button>
         </div>
       </div>
+      <OrderSummaryDashboard />
       <h2 className="text-2xl font-semibold mb-4">Orders</h2>
       <div className="space-y-6">
         {orders.map((order) => (

@@ -17,7 +17,7 @@ export default function Checkout() {
   const { cart, checkoutInfo, setCheckoutInfo, placeOrder } = useMenuStore()
   const [isSubmitting, setIsSubmitting] = useState(false)
   useEffect(() => {
-    setCheckoutInfo({ date: '30-06-2024' })
+    setCheckoutInfo({ date: '08-09-2024' })
     //eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
 
@@ -83,7 +83,7 @@ export default function Checkout() {
           />
           <div className="mb-4">
             <Label htmlFor="date">Date</Label>
-            <Select value='30-06-2024' disabled>  
+            <Select value='08-09-2024' disabled>  
               <SelectTrigger
                 id="date"
                 className="items-start"
@@ -91,11 +91,11 @@ export default function Checkout() {
                 <SelectValue placeholder="Select a date" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="30-06-2024">
+                <SelectItem value="08-09-2024">
                   <div className="flex items-start gap-3">
                     <div className="grid gap-0.5">
                       <p>
-                      Saturday, 30th August, 2024
+                      Sunday, 8th September, 2024
                       </p>
                     </div>
                   </div>

@@ -4,7 +4,7 @@ export default function OrderSummary() {
   const { cart } = useMenuStore()
 
   const subtotal = cart.reduce((total, item) => total + item.price * item.quantity, 0)
-  const tax = subtotal * 0.1 // Assuming 10% tax
+  const tax = subtotal * 0 // Assuming 10% tax
   const total = subtotal + tax
 
   return (
