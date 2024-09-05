@@ -16,6 +16,7 @@ type Order = {
     name: string
     phone: string
     time_slot: string
+    date:string
   }
   createdAt: string
   status: string
@@ -183,17 +184,22 @@ export default function AdminDashboard() {
           <Button onClick={handleLogout}>Logout</Button>
         </div>
       </div>
-      <OrderSummaryDashboard />
+      {/* <OrderSummaryDashboard /> */}
       <h2 className="text-2xl font-semibold mb-4">Orders</h2>
       <div className="space-y-6">
         {orders.map((order) => (
           <div key={order._id} className="bg-white shadow-md rounded-lg p-6">
             <h3 className="text-xl font-semibold mb-2">Order ID: {order.orderId}</h3>
-            <p className="mb-2">Date: {new Date(order.createdAt).toLocaleString()}</p>
+            <p className="mb-2">Placed on {new Date(order.createdAt).toLocaleString()}</p>
+            <p className="mb-2">Date: {(() => {
+        const [day, month, year] = order.checkoutInfo.date.split('-');
+        const date = new Date(`${year}-${month}-${day}`);
+        return date.toDateString();
+      })()}</p>
             <p className="mb-2">Customer: {order.checkoutInfo.name}</p>
             <p className="mb-2">Phone: {order.checkoutInfo.phone}</p>
             <p className="mb-4">Time Slot: {order.checkoutInfo.time_slot}</p>
-            <div className="mb-4">
+            {/* <div className="mb-4">
               <label htmlFor={`status-${order._id}`} className="block text-sm font-medium text-gray-700">Status</label>
               <Select onValueChange={(value) => handleStatusChange(order._id, value)} defaultValue={order.status}>
                 <SelectTrigger id={`status-${order._id}`}>
@@ -206,8 +212,8 @@ export default function AdminDashboard() {
                   <SelectItem value="cancelled">Cancelled</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
-            <div className="mb-4">
+            </div> */}
+            {/* <div className="mb-4">
               <label htmlFor={`payment-${order._id}`} className="block text-sm font-medium text-gray-700">Payment Status</label>
               <Select onValueChange={(value) => handlePaymentStatusChange(order._id, value)} defaultValue={order.paymentStatus}>
                 <SelectTrigger id={`payment-${order._id}`}>
@@ -219,7 +225,7 @@ export default function AdminDashboard() {
                   <SelectItem value="failed">Failed</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
+            </div> */}
             <h4 className="text-lg font-semibold mb-2">Items:</h4>
             <ul className="list-disc list-inside mb-4">
               {order.cart.map((item, index) => (
