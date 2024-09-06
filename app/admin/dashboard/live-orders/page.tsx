@@ -255,11 +255,11 @@ export default function LiveOrderManagement() {
 
   return (
     <div className="container mx-auto py-10">
-      <h1 className="text-3xl font-bold mb-6">Live Order Management</h1>
+      {/* <h1 className="text-3xl font-bold mb-6">Live Order Management</h1> */}
       <div className="mb-6 flex items-center space-x-4">
-        <Select value={selectedDate} onValueChange={setSelectedDate}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Select date" />
+        <Select  onValueChange={setSelectedDate}>
+          <SelectTrigger className="w-[200px]">
+            <SelectValue placeholder="Select an order date" />
           </SelectTrigger>
           <SelectContent>
             {availableDates.map((date) => (
