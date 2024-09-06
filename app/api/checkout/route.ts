@@ -10,7 +10,8 @@ export async function POST(request: Request) {
     const result = await db.collection("orders").insertOne({
       cart,
       checkoutInfo,
-      createdAt: new Date()
+      createdAt: new Date(),
+      status: 'todo'
     })
 
     return NextResponse.json({ success: true, orderId: result.insertedId })
