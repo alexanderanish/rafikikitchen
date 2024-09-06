@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -31,8 +31,15 @@ export default function AdminDashboard() {
   const router = useRouter()
 
   useEffect(() => {
+    const token = localStorage.getItem('adminToken')
+    if (!token) {
+      router.push('/admin/login')
+      return
+    }
     fetchOrders()
   }, [])
+
+
 
   const fetchOrders = async () => {
     const token = localStorage.getItem('adminToken')

@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { AlertCircle, CheckCircle, Clock, RefreshCcw, History } from 'lucide-react'
 import { format, parse } from 'date-fns'
 import { toast } from "@/components/ui/use-toast"
+import { useRouter } from 'next/navigation'
 import { Skeleton } from "@/components/ui/skeleton"
 import {
   Dialog,
@@ -62,7 +63,7 @@ export default function LiveOrderManagement() {
   const [availableDates, setAvailableDates] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-
+  const router = useRouter()
   const fetchAvailableDates = async () => {
     try {
       const response = await fetch('/api/live-orders/available-dates')
@@ -96,8 +97,14 @@ export default function LiveOrderManagement() {
   }
 
   useEffect(() => {
+    const token = localStorage.getItem('adminToken')
+    if (!token) {
+      router.push('/admin/login')
+      return
+    }
     fetchAvailableDates()
   }, [])
+
 
   useEffect(() => {
     fetchOrders()
