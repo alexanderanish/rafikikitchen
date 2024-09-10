@@ -83,7 +83,7 @@ export default function Checkout() {
           />
           <div className="mb-4">
             <Label htmlFor="date">Date</Label>
-            <Select value='08-09-2024' disabled>  
+            <Select value='15-09-2024' disabled>  
               <SelectTrigger
                 id="date"
                 className="items-start"
@@ -91,11 +91,11 @@ export default function Checkout() {
                 <SelectValue placeholder="Select a date" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="08-09-2024">
+                <SelectItem value="15-09-2024">
                   <div className="flex items-start gap-3">
                     <div className="grid gap-0.5">
                       <p>
-                      Sunday, 8th September, 2024
+                      Sunday, 15th September, 2024
                       </p>
                     </div>
                   </div>
