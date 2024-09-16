@@ -264,7 +264,7 @@ export default function LiveOrderManagement() {
           <SelectContent>
             {availableDates.map((date) => (
               <SelectItem key={date} value={date}>
-                {format(parse(date, 'dd-MM-yyyy', new Date()), 'dd MMM yyyy')}
+                {format(parse(date, 'dd-MM-yyyy', new Date()), 'dd MMM yyyy') || date}
               </SelectItem>
             ))}
           </SelectContent>

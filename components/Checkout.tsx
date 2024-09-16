@@ -16,14 +16,15 @@ export default function Checkout() {
   const router = useRouter()
   const { cart, checkoutInfo, setCheckoutInfo, placeOrder } = useMenuStore()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  useEffect(() => {
-    setCheckoutInfo({ date: '08-09-2024' })
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-  },[])
+  // useEffect(() => {
+  //   setCheckoutInfo({ date: '08-09-2024' })
+  //   //eslint-disable-next-line react-hooks/exhaustive-deps
+  // },[])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
+    console.log(setCheckoutInfo, "setCheckoutInfo")
     try {
       const result = await placeOrder()
       if (result.success) {
@@ -83,7 +84,7 @@ export default function Checkout() {
           />
           <div className="mb-4">
             <Label htmlFor="date">Date</Label>
-            <Select value='15-09-2024' disabled>  
+            <Select required onValueChange={(value)=> setCheckoutInfo({...checkoutInfo, date:value})}>  
               <SelectTrigger
                 id="date"
                 className="items-start"
@@ -91,11 +92,11 @@ export default function Checkout() {
                 <SelectValue placeholder="Select a date" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="15-09-2024">
+                <SelectItem value="22-09-2024">
                   <div className="flex items-start gap-3">
                     <div className="grid gap-0.5">
                       <p>
-                      Sunday, 15th September, 2024
+                      Sunday, 22nd September, 2024
                       </p>
                     </div>
                   </div>
@@ -105,7 +106,7 @@ export default function Checkout() {
           </div>
           <div className="mb-4">
             <Label htmlFor="time_slot">Time Slot</Label>
-            <Select onValueChange={(value) => setCheckoutInfo({ time_slot: value })}>  
+            <Select required onValueChange={(value) => setCheckoutInfo({ time_slot: value })}>  
               <SelectTrigger
                 id="time_slot"
                 className="items-start"
