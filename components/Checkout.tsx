@@ -24,7 +24,6 @@ export default function Checkout() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
-    console.log(setCheckoutInfo, "setCheckoutInfo")
     try {
       const result = await placeOrder()
       if (result.success) {
