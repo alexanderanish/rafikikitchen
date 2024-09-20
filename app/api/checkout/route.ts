@@ -14,7 +14,7 @@ export async function POST(request: Request) {
       status: 'todo'
     })
 
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/send-email`, {
+    const response = await fetch(`${process.env.VERCEL_URL}/api/send-email`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
