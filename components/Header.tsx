@@ -110,8 +110,8 @@ export default function Header() {
       {isMenuOpen && (
         <nav className="md:hidden bg-white border-t">
           <ul className="container mx-auto px-4 py-2 space-y-2">
-            <li><Link href="/" passHref className="block py-2 text-center">Home</Link></li>
-            <li><Link href="/menu" passHref className="block py-2 text-center">Menu</Link></li>
+            {/* <li><Link href="/" passHref className="block py-2 text-center">Home</Link></li> */}
+            <li><Link href="/" passHref className="block py-2 text-center">Menu</Link></li>
             {/* <li><Link href="/about" passHref className="block py-2 text-center">About</Link></li> */}
             {/* <li><Link href="/contact" className="block py-2 text-center">Contact</Link></li> */}
           </ul>
