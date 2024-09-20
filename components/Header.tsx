@@ -33,13 +33,13 @@ export default function Header() {
           /> */}
           
           
-          <Link href="/" passHref>
+          {/* <Link href="/" passHref>
             <Button className="hidden md:block" variant="ghost">Home</Button>
-          </Link>
+          </Link> */}
           {/* <Link href="/about" passHref>
             <Button className="hidden md:block" variant="ghost">About</Button>
           </Link> */}
-          <Link href="/menu" passHref>
+          <Link href="/" passHref>
             <Button className="hidden md:block" variant="ghost">Menu</Button>
           </Link>
           <Link href="https://www.instagram.com/rafiki.kitchen" passHref>
