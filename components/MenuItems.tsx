@@ -105,6 +105,7 @@ export default function MenuItems() {
   const { selectedItem, setSelectedItem, cart, addToCart, removeFromCart, searchQuery, cartCount } = useMenuStore()
   const [sizeSelectionItem, setSizeSelectionItem] = useState<typeof menuItems[0] | null>(null)
   const [selectedSize, setSelectedSize] = useState<'full' | 'half'>('full')
+  const [removeDialogItem, setRemoveDialogItem] = useState<typeof cart[0] | null>(null)  // State to track item for remove dialog
 
   const filteredMenuItems = menuItems.filter(item =>
     item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -116,6 +117,21 @@ export default function MenuItems() {
   const handleAddToCart = (item: typeof menuItems[0], size: 'full' | 'half') => {
     addToCart(item, size)
     setSizeSelectionItem(null)
+  }
+
+  const handleRemoveItem = (item: typeof cart[0]) => {
+    if (item.quantity > 1) {
+      setRemoveDialogItem(item) // Show pop-up when there are multiple items
+    } else {
+      removeFromCart(item.cartId) // Directly remove if there is only one
+    }
+  }
+
+  const confirmRemoveItem = () => {
+    if (removeDialogItem) {
+      removeFromCart(removeDialogItem.cartId)
+      setRemoveDialogItem(null)
+    }
   }
 
   return (
@@ -153,7 +169,15 @@ export default function MenuItems() {
                     {quantityFull > 0 || quantityHalf > 0 ? (
                       <>
                         <Button
-                          onClick={() => removeFromCart(cartItemFull?.cartId || cartItemHalf?.cartId)}
+                          
+                          onClick={() => {
+                            // Check if cartItemFull or cartItemHalf exists before removing
+                            if (cartItemFull) {
+                              handleRemoveItem(cartItemFull)
+                            } else if (cartItemHalf) {
+                              handleRemoveItem(cartItemHalf)
+                            }
+                          }}
                           className="text-stone-600 hover:text-stone-800"
                           aria-label="Remove one sandwich from cart"
                           variant="ghost"
