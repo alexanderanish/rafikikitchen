@@ -1,12 +1,14 @@
 'use client'
 
 import Image from 'next/image'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useMenuStore } from '@/app/store/menuStore'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { PlusCircle, MinusCircle, ChevronLeft, ChevronRight, ShoppingCart, AlertTriangle } from 'lucide-react'
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Label } from "@/components/ui/label"
+import { PlusCircle, MinusCircle, ChevronLeft, ChevronRight, ShoppingCart } from 'lucide-react'
 
 const menuItems = [
   {
@@ -14,9 +16,10 @@ const menuItems = [
     name: 'Nala',
     description: "The Nala features pork solantulem from Nihal's mum's recipe, cooked with kokum and spices. The sandwich is balanced with spicy Kasundi mustard, sweet apple jam, salted cucumber, lettuce, and creamy homemade mayonnaise.",
     price: 400,
+    halfPrice: 250,
     images: ['/pork_1.jpg', '/pork_2.jpg', '/pork_3.jpg'],
     vegetarian: false,
-    allergens:["Pork", "Egg", "Mustard Seeds"],
+    allergens: ["Pork", "Egg", "Mustard Seeds"],
     ingredients: ['Pork Solantulem (Kokum)', 'Homemade Mayonaise', 'Kasundi Mustard', 'Cucumber', 'Lettuce leaves', 'Spiced Apple Jam', 'Baguette'],
   },
   {
@@ -24,9 +27,10 @@ const menuItems = [
     name: 'Rafiki',
     description: "If you love lemongrass, this sandwich is for you. It includes grilled chicken in a green chilli and lemongrass marinade, lemongrass labneh, pickled carrots, radish, salted cucumbers, and basil leaves for a punchy, spicy flavor.",
     price: 400,
+    halfPrice: 250,
     images: ['/chicken_1.jpg', '/chicken_2.jpg', '/chicken_3.jpg','/chicken_4.jpg', '/chicken_5.jpg', '/chicken_6.jpg'],
     vegetarian: false,
-    allergens:["Lemongrass", "Chicken", "Fish Sauce", "Soy Sauce", "Curd"],
+    allergens: ["Lemongrass", "Chicken", "Fish Sauce", "Soy Sauce", "Curd"],
     ingredients: ['Green Chilli and Lemongrass Chicken', 'Pickled Carrot and Radish', 'Salted Cucumber', 'Lemongrass Labneh', 'Fish Sauce', 'Soy Sauce', 'Baguette'],
   },
   {
@@ -34,9 +38,10 @@ const menuItems = [
     name: 'Jazz',
     description: "The Jazz is a vegetarian Middle Eastern sandwich with smoky baked tahini eggplant, homemade hummus, labneh, garlic toum, spiced tomato jam, basil leaves, and homemade mozzarella.",
     price: 350,
+    halfPrice: 200,
     images: ['/veg_1.jpg', '/veg_2.jpg', '/veg_3.jpg', '/veg_4.jpg'],
     vegetarian: true,
-    allergens:["Eggplant", "Sesame Seeds", "Chickpeas", "Milk", "Curd" ],
+    allergens: ["Eggplant", "Sesame Seeds", "Chickpeas", "Milk", "Curd"],
     ingredients: ['Baked Tahini Eggplant', 'Hummus', 'Labneh', 'Garlic Toum', 'Spiced Tomato Jam', 'Mozarella','Basil Leaves','Baguette'],
   },
 ]
@@ -58,7 +63,7 @@ function Carousel({ images }: { images: string[] }) {
         <div className="flex transition-transform duration-300 ease-in-out" style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
           {images.map((image, index) => (
             <div key={index} className="w-full flex-shrink-0">
-              <Image src={image} alt={`Slide ${index + 1}`} width={400} height={400}  className="w-full h-64 object-cover" />
+              <Image src={image} alt={`Slide ${index + 1}`} width={400} height={400} className="w-full h-64 object-cover" />
             </div>
           ))}
         </div>
@@ -89,7 +94,6 @@ function VegIndicator({ isVegetarian }: { isVegetarian: boolean }) {
 function AllergenInfo({ allergens }: { allergens: string[] }) {
   return (
     <div className="flex items-center mt-2">
-      {/* <AlertTriangle className="w-4 h-4 text-yellow-500 mr-2" /> */}
       <span className="text-sm text-gray-600">
         Contains: {allergens.join(', ')}
       </span>
@@ -99,6 +103,8 @@ function AllergenInfo({ allergens }: { allergens: string[] }) {
 
 export default function MenuItems() {
   const { selectedItem, setSelectedItem, cart, addToCart, removeFromCart, searchQuery, cartCount } = useMenuStore()
+  const [sizeSelectionItem, setSizeSelectionItem] = useState<typeof menuItems[0] | null>(null)
+  const [selectedSize, setSelectedSize] = useState<'full' | 'half'>('full')
 
   const filteredMenuItems = menuItems.filter(item =>
     item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -106,12 +112,20 @@ export default function MenuItems() {
   )
 
   const router = useRouter()
+
+  const handleAddToCart = (item: typeof menuItems[0], size: 'full' | 'half') => {
+    addToCart(item, size)
+    setSizeSelectionItem(null)
+  }
+
   return (
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredMenuItems.map((item) => {
-          const cartItem = cart.find((cartItem) => cartItem.id === item.id)
-          const quantity = cartItem?.quantity || 0
+          const cartItemFull = cart.find((cartItem) => cartItem.id === item.id && cartItem.size === 'full')
+          const cartItemHalf = cart.find((cartItem) => cartItem.id === item.id && cartItem.size === 'half')
+          const quantityFull = cartItemFull?.quantity || 0
+          const quantityHalf = cartItemHalf?.quantity || 0
 
           return (
             <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
@@ -134,24 +148,24 @@ export default function MenuItems() {
                 </p>
                 <AllergenInfo allergens={item.allergens} />
                 <div className="mt-auto pt-4 flex justify-between items-center">
-                  <span className="text-lg font-medium">₹{item.price.toFixed(2)}</span>
+                  <span className="text-lg font-medium">₹{item.halfPrice.toFixed(2)}</span>
                   <div className="flex items-center space-x-2">
-                    {quantity > 0 ? (
+                    {quantityFull > 0 || quantityHalf > 0 ? (
                       <>
                         <Button
-                          onClick={() => removeFromCart(item.id)}
+                          onClick={() => removeFromCart(cartItemFull?.cartId || cartItemHalf?.cartId)}
                           className="text-stone-600 hover:text-stone-800"
-                          aria-label="Remove one from cart"
+                          aria-label="Remove one sandwich from cart"
                           variant="ghost"
                           size="sm"
                         >
                           <MinusCircle className="w-6 h-6" />
                         </Button>
-                        <span className="font-medium">{quantity}</span>
+                        <span className="font-medium">{quantityFull + quantityHalf}</span>
                         <Button
-                          onClick={() => addToCart(item)}
+                          onClick={() => setSizeSelectionItem(item)}
                           className="text-stone-600 hover:text-stone-800"
-                          aria-label="Add one to cart"
+                          aria-label="Add one sandwich to cart"
                           variant="ghost"
                           size="sm"
                         >
@@ -159,7 +173,7 @@ export default function MenuItems() {
                         </Button>
                       </>
                     ) : (
-                      <Button onClick={() => addToCart(item)} size="sm">
+                      <Button onClick={() => setSizeSelectionItem(item)} size="sm">
                         Add to Cart
                       </Button>
                     )}
@@ -175,7 +189,6 @@ export default function MenuItems() {
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>{selectedItem?.name}</DialogTitle>
-            {/* <DialogDescription>{selectedItem?.description}</DialogDescription> */}
           </DialogHeader>
           <div className="py-4">
             {selectedItem && <Carousel images={selectedItem.images} />}
@@ -200,7 +213,7 @@ export default function MenuItems() {
               Close
             </Button>
             <Button onClick={() => {
-              addToCart(selectedItem!)
+              setSizeSelectionItem(selectedItem)
               setSelectedItem(null)
             }}>
               Add to Cart
@@ -208,6 +221,41 @@ export default function MenuItems() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <Dialog open={sizeSelectionItem !== null} onOpenChange={() => setSizeSelectionItem(null)}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Select Size</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <RadioGroup defaultValue="full" onValueChange={(value: string) => setSelectedSize(value as 'full' | 'half')}>
+              <div className="flex items-center justify-between space-x-2">
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="full" id="full" />
+                  <Label htmlFor="full">Full</Label>
+                </div>
+                <span>₹{sizeSelectionItem?.price.toFixed(2)}</span>
+              </div>
+              <div className="flex items-center justify-between space-x-2 mt-2">
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="half" id="half" />
+                  <Label htmlFor="half">Half</Label>
+                </div>
+                <span>₹{sizeSelectionItem?.halfPrice.toFixed(2)}</span>
+              </div>
+            </RadioGroup>
+          </div>
+          <DialogFooter>
+            <Button onClick={() => setSizeSelectionItem(null)} variant="outline">
+              Cancel
+            </Button>
+            <Button onClick={() => sizeSelectionItem && handleAddToCart(sizeSelectionItem, selectedSize)}>
+              Add to Cart
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {cartCount > 0 && (
         <div className="fixed bottom-4 lg:bottom-16 right-4 z-50">
           <Button onClick={() => router.push('/checkout')} size="lg" className="shadow-lg bg-orange-500">

@@ -47,7 +47,7 @@ export default function Checkout() {
       <div className="text-center py-12">
         <h2 className="text-2xl font-bold mb-4">Your cart is empty</h2>
         <p className="mb-4">Add some items to your cart before proceeding to checkout.</p>
-        <Button onClick={() => router.push('/menu')}>Go to Menu</Button>
+        <Button onClick={() => router.push('/')}>Go to Menu</Button>
       </div>
     )
   }
