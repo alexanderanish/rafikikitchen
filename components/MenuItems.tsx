@@ -252,7 +252,7 @@ export default function MenuItems() {
             <DialogTitle>Select Size</DialogTitle>
           </DialogHeader>
           <div className="py-4">
-            <RadioGroup defaultValue="full" onValueChange={(value: string) => setSelectedSize(value as 'full' | 'half')}>
+            <RadioGroup defaultValue="full" value={selectedSize} onValueChange={(value: string) => setSelectedSize(value as 'full' | 'half')}>
               <div className="flex items-center justify-between space-x-2">
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="full" id="full" />
