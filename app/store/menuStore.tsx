@@ -134,7 +134,7 @@ export const useMenuStore = create(
             throw new Error(data.error || 'An error occurred while processing your order.')
           }
         } catch (error: any) {
-          console.error('Error placing order:', error)
+          console.error('Error placing order (store):', error)
           return { success: false, error: error.message }
         }
       },
