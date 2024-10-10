@@ -91,11 +91,20 @@ export default function Checkout() {
                 <SelectValue placeholder="Select a date" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="22-09-2024">
+                <SelectItem value="12-10-2024">
                   <div className="flex items-start gap-3">
                     <div className="grid gap-0.5">
                       <p>
-                      Sunday, 22nd September, 2024
+                      Saturday, 12th October, 2024
+                      </p>
+                    </div>
+                  </div>
+                </SelectItem>
+                <SelectItem value="13-10-2024">
+                  <div className="flex items-start gap-3">
+                    <div className="grid gap-0.5">
+                      <p>
+                      Sunday, 13th October, 2024
                       </p>
                     </div>
                   </div>
