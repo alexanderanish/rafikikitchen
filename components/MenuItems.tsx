@@ -86,7 +86,7 @@ const menuItems = [
     description: "Goan Pork Roast. Kasundi Mustard. Jiardenera. Kewpie Mayo. French Baguette.",
     price: 400,
     halfPrice: 300,
-    images: ['/pork_new_1.jpg'],
+    images: ['/pork_new_1.JPG'],
     vegetarian: false,
     allergens: ["Pork", "Mustard Seeds", "Egg", "Mayonnaise"],
     ingredients: ['Goan Pork Roast', 'Kasundi Mustard', 'Jiardenera', 'Kewpie Mayo', 'French Baguette'],
