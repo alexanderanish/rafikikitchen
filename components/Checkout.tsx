@@ -95,12 +95,12 @@ export default function Checkout() {
                   <div className="flex items-start gap-3">
                     <div className="grid gap-0.5">
                       <p>
-                      Saturday, 12th October, 2024
+                      Sunday, 19th January, 2025
                       </p>
                     </div>
                   </div>
                 </SelectItem>
-                <SelectItem value="13-10-2024">
+                {/* <SelectItem value="13-10-2024">
                   <div className="flex items-start gap-3">
                     <div className="grid gap-0.5">
                       <p>
@@ -108,7 +108,7 @@ export default function Checkout() {
                       </p>
                     </div>
                   </div>
-                </SelectItem>
+                </SelectItem> */}
               </SelectContent>
             </Select>
           </div>
