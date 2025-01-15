@@ -52,7 +52,7 @@ const menuItems = [
     name: 'Nala',
     description: "The Nala features pork solantulem from Nihal's mum's recipe, cooked with kokum and spices. The sandwich is balanced with spicy Kasundi mustard, sweet apple jam, salted cucumber, lettuce, and creamy homemade mayonnaise.",
     price: 400,
-    halfPrice: 250,
+    halfPrice: 300,
     images: ['/pork_1.jpg', '/pork_2.jpg', '/pork_3.jpg'],
     vegetarian: false,
     allergens: ["Pork", "Egg", "Mustard Seeds"],
@@ -63,7 +63,7 @@ const menuItems = [
     name: 'Rafiki',
     description: "If you love lemongrass, this sandwich is for you. It includes grilled chicken in a green chilli and lemongrass marinade, lemongrass labneh, pickled carrots, radish, salted cucumbers, and basil leaves for a punchy, spicy flavor.",
     price: 400,
-    halfPrice: 250,
+    halfPrice: 300,
     images: ['/chicken_1.jpg', '/chicken_2.jpg', '/chicken_3.jpg','/chicken_4.jpg', '/chicken_5.jpg', '/chicken_6.jpg'],
     vegetarian: false,
     allergens: ["Lemongrass", "Chicken", "Fish Sauce", "Soy Sauce", "Curd"],
@@ -74,7 +74,7 @@ const menuItems = [
     name: 'Jazz',
     description: "The Jazz is a vegetarian Middle Eastern sandwich with smoky baked tahini eggplant, homemade hummus, labneh, garlic toum, spiced tomato jam, basil leaves, and homemade mozzarella.",
     price: 350,
-    halfPrice: 200,
+    halfPrice: 250,
     images: ['/veg_1.jpg', '/veg_2.jpg', '/veg_3.jpg', '/veg_4.jpg'],
     vegetarian: true,
     allergens: ["Eggplant", "Sesame Seeds", "Chickpeas", "Milk", "Curd"],
@@ -242,7 +242,7 @@ export default function MenuItems() {
                 </p>
                 <AllergenInfo allergens={item.allergens} />
                 <div className="mt-auto pt-4 flex justify-between items-center">
-                  <span className="text-lg font-medium">₹{item.halfPrice?.toFixed(2) || item.price.toFixed(2)}</span>
+                  {/* <span className="text-lg font-medium">₹{item.halfPrice?.toFixed(2) || item.price.toFixed(2)}</span> */}
                   <div className="flex items-center space-x-2">
                   {quantityFull > 0 || quantityHalf > 0 ? (
                   <>
