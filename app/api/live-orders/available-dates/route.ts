@@ -14,7 +14,17 @@ export async function GET() {
     const ordersCollection = database.collection('orders')
 
     const dates = await ordersCollection.distinct('checkoutInfo.date')
-    dates.sort((a, b) => new Date(b).getTime() - new Date(a).getTime()) // Sort dates in descending order
+    // dates.sort((a, b) => new Date(b).getTime() - new Date(a).getTime()) // Sort dates in descending order
+    dates.sort((a, b) => {
+      const [dayA, monthA, yearA] = a.split('-').map(Number);
+      const [dayB, monthB, yearB] = b.split('-').map(Number);
+    
+      const dateA = new Date(yearA, monthA - 1, dayA); // JavaScript months are 0-indexed
+      const dateB = new Date(yearB, monthB - 1, dayB);
+    
+      return dateA.getTime() - dateB.getTime(); 
+    });
+    console.log(dates, "dates")
 
     return NextResponse.json({ dates })
   } catch (error) {
