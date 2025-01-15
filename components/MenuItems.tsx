@@ -10,6 +10,42 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { PlusCircle, MinusCircle, ChevronLeft, ChevronRight, ShoppingCart } from 'lucide-react'
 
+// const menuItems = [
+//   {
+//     id: 1,
+//     name: 'Nala',
+//     description: "The Nala features pork solantulem from Nihal's mum's recipe, cooked with kokum and spices. The sandwich is balanced with spicy Kasundi mustard, sweet apple jam, salted cucumber, lettuce, and creamy homemade mayonnaise.",
+//     price: 400,
+//     halfPrice: 250,
+//     images: ['/pork_1.jpg', '/pork_2.jpg', '/pork_3.jpg'],
+//     vegetarian: false,
+//     allergens: ["Pork", "Egg", "Mustard Seeds"],
+//     ingredients: ['Pork Solantulem (Kokum)', 'Homemade Mayonaise', 'Kasundi Mustard', 'Cucumber', 'Lettuce leaves', 'Spiced Apple Jam', 'Baguette'],
+//   },
+//   {
+//     id: 2,
+//     name: 'Rafiki',
+//     description: "If you love lemongrass, this sandwich is for you. It includes grilled chicken in a green chilli and lemongrass marinade, lemongrass labneh, pickled carrots, radish, salted cucumbers, and basil leaves for a punchy, spicy flavor.",
+//     price: 400,
+//     halfPrice: 250,
+//     images: ['/chicken_1.jpg', '/chicken_2.jpg', '/chicken_3.jpg','/chicken_4.jpg', '/chicken_5.jpg', '/chicken_6.jpg'],
+//     vegetarian: false,
+//     allergens: ["Lemongrass", "Chicken", "Fish Sauce", "Soy Sauce", "Curd"],
+//     ingredients: ['Green Chilli and Lemongrass Chicken', 'Pickled Carrot and Radish', 'Salted Cucumber', 'Lemongrass Labneh', 'Fish Sauce', 'Soy Sauce', 'Baguette'],
+//   },
+//   {
+//     id: 3,
+//     name: 'Jazz',
+//     description: "The Jazz is a vegetarian Middle Eastern sandwich with smoky baked tahini eggplant, homemade hummus, labneh, garlic toum, spiced tomato jam, basil leaves, and homemade mozzarella.",
+//     price: 350,
+//     halfPrice: 200,
+//     images: ['/veg_1.jpg', '/veg_2.jpg', '/veg_3.jpg', '/veg_4.jpg'],
+//     vegetarian: true,
+//     allergens: ["Eggplant", "Sesame Seeds", "Chickpeas", "Milk", "Curd"],
+//     ingredients: ['Baked Tahini Eggplant', 'Hummus', 'Labneh', 'Garlic Toum', 'Spiced Tomato Jam', 'Mozarella','Basil Leaves','Baguette'],
+//   },
+// ]
+
 const menuItems = [
   {
     id: 1,
@@ -43,6 +79,48 @@ const menuItems = [
     vegetarian: true,
     allergens: ["Eggplant", "Sesame Seeds", "Chickpeas", "Milk", "Curd"],
     ingredients: ['Baked Tahini Eggplant', 'Hummus', 'Labneh', 'Garlic Toum', 'Spiced Tomato Jam', 'Mozarella','Basil Leaves','Baguette'],
+  },
+  {
+    id: 4,
+    name: 'MESALI',
+    description: "Goan Pork Roast. Kasundi Mustard. Jiardenera. Kewpie Mayo. French Baguette.",
+    price: 400,
+    halfPrice: 300,
+    images: ['/pork_new_1.jpg'],
+    vegetarian: false,
+    allergens: ["Pork", "Mustard Seeds", "Egg", "Mayonnaise"],
+    ingredients: ['Goan Pork Roast', 'Kasundi Mustard', 'Jiardenera', 'Kewpie Mayo', 'French Baguette'],
+  },
+  {
+    id: 5,
+    name: 'LORRY',
+    description: "Goan Buff Roast. Kasundi Mustard. Jiardenera. Kewpie Mayo. French Baguette.",
+    price: 400,
+    halfPrice: 300,
+    images: ['/buff_1.JPG'],
+    vegetarian: false,
+    allergens: ["Buff", "Mustard Seeds", "Egg", "Mayonnaise"],
+    ingredients: ['Goan Buff Roast', 'Kasundi Mustard', 'Jiardenera', 'Kewpie Mayo', 'French Baguette'],
+  },
+  {
+    id: 6,
+    name: 'SO',
+    description: "Beetroot. Potato. Tomato. Cucumber. Onion. Slice Cheese. Coriander Chutney. Peanut Chutney. Ridge gourd Chutney. Shokupan (Japanese Milk Bread).",
+    price: 250,
+    images: ['/bombay_1.JPG'],
+    vegetarian: true,
+    allergens: ["Cheese", "Peanuts", "Gluten"],
+    ingredients: ['Beetroot', 'Potato', 'Tomato', 'Cucumber', 'Onion', 'Slice Cheese', 'Coriander Chutney', 'Peanut Chutney', 'Ridge Gourd Chutney', 'Shokupan (Japanese Milk Bread)'],
+  },
+  {
+    id: 7,
+    name: 'DORITO',
+    description: "Boiled Eggs. Kewpie Mayo. Shokupan (Japanese Milk Bread).",
+    price: 300,
+    images: ['/egg_1.JPG'],
+    vegetarian: false,
+    allergens: ["Egg", "Mayonnaise"],
+    ingredients: ['Boiled Eggs', 'Kewpie Mayo', 'Shokupan (Japanese Milk Bread)'],
   },
 ]
 
@@ -164,43 +242,42 @@ export default function MenuItems() {
                 </p>
                 <AllergenInfo allergens={item.allergens} />
                 <div className="mt-auto pt-4 flex justify-between items-center">
-                  <span className="text-lg font-medium">₹{item.halfPrice.toFixed(2)}</span>
+                  <span className="text-lg font-medium">₹{item.halfPrice?.toFixed(2) || item.price.toFixed(2)}</span>
                   <div className="flex items-center space-x-2">
-                    {quantityFull > 0 || quantityHalf > 0 ? (
-                      <>
-                        <Button
-                          
-                          onClick={() => {
-                            // Check if cartItemFull or cartItemHalf exists before removing
-                            if (cartItemFull) {
-                              handleRemoveItem(cartItemFull)
-                            } else if (cartItemHalf) {
-                              handleRemoveItem(cartItemHalf)
-                            }
-                          }}
-                          className="text-stone-600 hover:text-stone-800"
-                          aria-label="Remove one sandwich from cart"
-                          variant="ghost"
-                          size="sm"
-                        >
-                          <MinusCircle className="w-6 h-6" />
-                        </Button>
-                        <span className="font-medium">{quantityFull + quantityHalf}</span>
-                        <Button
-                          onClick={() => setSizeSelectionItem(item)}
-                          className="text-stone-600 hover:text-stone-800"
-                          aria-label="Add one sandwich to cart"
-                          variant="ghost"
-                          size="sm"
-                        >
-                          <PlusCircle className="w-6 h-6" />
-                        </Button>
-                      </>
-                    ) : (
-                      <Button onClick={() => setSizeSelectionItem(item)} size="sm">
-                        Add to Cart
-                      </Button>
-                    )}
+                  {quantityFull > 0 || quantityHalf > 0 ? (
+                  <>
+                    <Button
+                      onClick={() => {
+                        // Check if cartItemFull or cartItemHalf exists before removing
+                        if (cartItemFull) {
+                          handleRemoveItem(cartItemFull)
+                        } else if (cartItemHalf) {
+                          handleRemoveItem(cartItemHalf)
+                        }
+                      }}
+                      className="text-stone-600 hover:text-stone-800"
+                      aria-label="Remove one sandwich from cart"
+                      variant="ghost"
+                      size="sm"
+                    >
+                      <MinusCircle className="w-6 h-6" />
+                    </Button>
+                    <span className="font-medium">{quantityFull + quantityHalf}</span>
+                    <Button
+                      onClick={() => setSizeSelectionItem(item)}
+                      className="text-stone-600 hover:text-stone-800"
+                      aria-label="Add one sandwich to cart"
+                      variant="ghost"
+                      size="sm"
+                    >
+                      <PlusCircle className="w-6 h-6" />
+                    </Button>
+                  </>
+                ) : (
+                  <Button onClick={() => setSizeSelectionItem(item)} size="sm">
+                    Add to Cart
+                  </Button>
+                )}
                   </div>
                 </div>
               </div>
@@ -246,7 +323,7 @@ export default function MenuItems() {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={sizeSelectionItem !== null} onOpenChange={() => setSizeSelectionItem(null)}>
+      {/* <Dialog open={sizeSelectionItem !== null} onOpenChange={() => setSizeSelectionItem(null)}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Select Size</DialogTitle>
@@ -267,6 +344,43 @@ export default function MenuItems() {
                 </div>
                 <span>₹{sizeSelectionItem?.halfPrice.toFixed(2)}</span>
               </div>
+            </RadioGroup>
+          </div>
+          <DialogFooter>
+            <Button onClick={() => setSizeSelectionItem(null)} variant="outline">
+              Cancel
+            </Button>
+            <Button onClick={() => sizeSelectionItem && handleAddToCart(sizeSelectionItem, selectedSize)}>
+              Add to Cart
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog> */}
+      <Dialog open={sizeSelectionItem !== null} onOpenChange={() => setSizeSelectionItem(null)}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Select Size</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <RadioGroup defaultValue="full" value={selectedSize} onValueChange={(value: string) => setSelectedSize(value as 'full' | 'half')}>
+              <div className="flex items-center justify-between space-x-2">
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="full" id="full" />
+                  <Label htmlFor="full">Full</Label>
+                </div>
+                <span>₹{sizeSelectionItem?.price.toFixed(2)}</span>
+              </div>
+
+              {/* Only show the 'half' option if halfPrice is available */}
+              {sizeSelectionItem?.halfPrice && (
+                <div className="flex items-center justify-between space-x-2 mt-2">
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="half" id="half" />
+                    <Label htmlFor="half">Half</Label>
+                  </div>
+                  <span>₹{sizeSelectionItem?.halfPrice.toFixed(2)}</span>
+                </div>
+              )}
             </RadioGroup>
           </div>
           <DialogFooter>

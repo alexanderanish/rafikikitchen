@@ -6,7 +6,7 @@ type MenuItem = {
   name: string
   description: string
   price: number
-  halfPrice: number
+  halfPrice?: number
   images: string[]
   video?: string
   vegetarian: boolean
@@ -53,9 +53,9 @@ export const useMenuStore = create(
       setSelectedItem: (item) => set({ selectedItem: item }),
       cart: [],
       addToCart: (item, size) => set((state) => {
-        console.log('item', item, 'size', size)
+        const price = size === 'full' ? item.price : item.halfPrice ?? item.price;  // Use full price if half price is not available
         const existingItem = state.cart.find((cartItem) => cartItem.id === item.id && cartItem.size === size)
-        const price = size === 'full' ? item.price : item.halfPrice
+      
         if (existingItem) {
           // If item already exists, increment the quantity
           return {
