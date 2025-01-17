@@ -26,6 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import {WhatsAppDialog} from "@/components/WhatsappDialog";
 
 type Sandwich = {
   id: number
@@ -37,6 +38,7 @@ type Sandwich = {
   allergens: string[]
   ingredients: string[]
   quantity: number
+  size: string
 }
 
 type CheckoutInfo = {
@@ -137,25 +139,82 @@ export default function LiveOrderManagement() {
     }
   }
 
+  // const getSandwichSummary = () => {
+  //   const summary: { [key: string]: number } = {}
+  //   if (!orders || !Array.isArray(orders)) return []
+  
+  //   // Filter orders by selected time slot
+  //   const filteredOrders = selectedTimeSlot === 'all'
+  //     ? orders
+  //     : orders.filter(order => order.checkoutInfo.time_slot === selectedTimeSlot)
+  
+  //   filteredOrders.forEach(order => {
+  //     if (order.status !== 'done') {
+  //       order.cart.forEach(item => {
+  //         summary[item.name] = (summary[item.name] || 0) + item.quantity
+  //       })
+  //     }
+  //   })
+  
+  //   return Object.entries(summary).sort((a, b) => b[1] - a[1])
+  // }
+
   const getSandwichSummary = () => {
-    const summary: { [key: string]: number } = {}
-    if (!orders || !Array.isArray(orders)) return []
+    const summary: {
+      [key: string]: { half: number; full: number; totalIncome: number };
+    } = {};
+    let totalHalves = 0;
+    let totalFulls = 0;
+  
+    if (!orders || !Array.isArray(orders)) {
+      return { sandwichDetails: [], totalIncome: 0, totalHalves: 0, totalFulls: 0 };
+    }
   
     // Filter orders by selected time slot
-    const filteredOrders = selectedTimeSlot === 'all'
-      ? orders
-      : orders.filter(order => order.checkoutInfo.time_slot === selectedTimeSlot)
+    const filteredOrders =
+      selectedTimeSlot === "all"
+        ? orders
+        : orders.filter(
+            (order) => order.checkoutInfo.time_slot === selectedTimeSlot
+          );
   
-    filteredOrders.forEach(order => {
-      if (order.status !== 'done') {
-        order.cart.forEach(item => {
-          summary[item.name] = (summary[item.name] || 0) + item.quantity
-        })
+    filteredOrders.forEach((order) => {
+      if (order.status !== "done") {
+        order.cart.forEach((item) => {
+          const isHalf = item.size.toLowerCase() === "half";
+          const isFull = item.size.toLowerCase() === "full";
+  
+          if (!summary[item.name]) {
+            summary[item.name] = { half: 0, full: 0, totalIncome: 0 };
+          }
+  
+          if (isHalf) {
+            summary[item.name].half += item.quantity;
+            totalHalves += item.quantity;
+          } else if (isFull) {
+            summary[item.name].full += item.quantity;
+            totalFulls += item.quantity;
+          }
+  
+          summary[item.name].totalIncome += item.price * item.quantity;
+        });
       }
-    })
+    });
   
-    return Object.entries(summary).sort((a, b) => b[1] - a[1])
-  }
+    return {
+      sandwichDetails: Object.entries(summary).sort(
+        ([, a], [, b]) => b.totalIncome - a.totalIncome
+      ),
+      totalIncome: Object.values(summary).reduce(
+        (total, item) => total + item.totalIncome,
+        0
+      ),
+      totalHalves,
+      totalFulls,
+    };
+  };
+  
+  
   
 
   const sandwichSummary = getSandwichSummary()
@@ -206,11 +265,25 @@ export default function LiveOrderManagement() {
       </CardHeader>
       <CardContent>
         <div className="text-xs text-muted-foreground mb-2">Time Slot: {order.checkoutInfo.time_slot}</div>
-        <ul className="text-sm">
+        {/* <ul className="text-sm">
           {order.cart.map((item, index) => (
-            <li key={index}>{item.quantity}x {item.name}</li>
+            <li key={index}>{item.quantity}x {item.name} {item.size}</li>
           ))}
-        </ul>
+        </ul> */}
+        <div className="text-sm">
+          <ul>
+            {order.cart.map((item, index) => (
+              <li key={index}>
+                <span>
+                  {item.quantity}x {item.name} ({item.size}) - ₹{(item.price * item.quantity).toFixed(2)}
+                </span>
+              </li>
+            ))}
+          </ul>
+          <div className="font-bold mt-2">
+            Total: ₹{order.cart.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2)}
+          </div>
+        </div>
         <div className="flex justify-between items-center mt-4">
           {/* <Dialog>
             <DialogTrigger asChild>
@@ -248,6 +321,15 @@ export default function LiveOrderManagement() {
               </Button>
             )}
           </div>
+        </div>
+        <div className="flex justify-between items-center mt-4">
+          <WhatsAppDialog
+            orderName={order.checkoutInfo.name}
+            orderNumber={order.checkoutInfo.phone}
+            orderCart={order.cart}
+            timeSlot={order.checkoutInfo.time_slot}
+            date={order.checkoutInfo.date}
+          />
         </div>
       </CardContent>
     </Card>
@@ -328,6 +410,7 @@ export default function LiveOrderManagement() {
                 </TabsContent>
               ))}
             </Tabs>
+
           </CardContent>
         </Card>
         <Card>
@@ -336,18 +419,41 @@ export default function LiveOrderManagement() {
           </CardHeader>
           <CardContent>
             <ScrollArea className="h-[600px]">
-              {sandwichSummary.length === 0 ? (
+              {sandwichSummary.sandwichDetails.length === 0 ? (
                 <p>No sandwiches to prepare at the moment.</p>
               ) : (
                 <ul>
-                  {sandwichSummary.map(([name, quantity]) => (
-                    <li key={name} className="flex justify-between items-center py-2 border-b last:border-b-0">
-                      <span>{name}</span>
-                      <Badge variant="secondary">{quantity}</Badge>
+                  {sandwichSummary.sandwichDetails.map(([name, details]) => (
+                    <li
+                      key={name}
+                      className="flex flex-col py-2 border-b last:border-b-0"
+                    >
+                      <div className="flex justify-between items-center">
+                        <span className="font-medium">{name}</span>
+                        <div className="flex justify-between space-x-2">
+                          <Badge variant="secondary" className='justify-between space-x-2'>
+                            <span>
+                              H: {details.half}
+                            </span>
+                          </Badge>
+                          <Badge variant="secondary" className='justify-between space-x-2'>
+                            <span>
+                              F: {details.full}
+                            </span>
+                          </Badge>
+                        </div>
+                      </div>
                     </li>
                   ))}
                 </ul>
               )}
+              <div className="flex justify-end items-center font-bold mt-4 space-x-3">
+                <span>Halves: {sandwichSummary.totalHalves}</span>
+                <span>Fulls: {sandwichSummary.totalFulls}</span>
+              </div>
+              <div className="font-bold mt-4 text-right">
+                Total: ₹{sandwichSummary.totalIncome.toFixed(2)}
+              </div>
             </ScrollArea>
           </CardContent>
         </Card>
