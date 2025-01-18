@@ -31,7 +31,7 @@ export function WhatsAppDialog({ orderName, orderNumber, orderCart, timeSlot, da
       <DialogTrigger asChild>
         <Button size="sm" variant="outline"><Mail /></Button>
       </DialogTrigger>
-      <DialogContent className="flex flex-col h-screen max-h-screen">
+      <DialogContent className="flex flex-col sm:h-screen md:h-4/5 max-h-screen">
         <DialogHeader>
           <DialogTitle>{orderName} || {orderNumber} </DialogTitle>
         </DialogHeader>
