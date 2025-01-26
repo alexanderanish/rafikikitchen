@@ -24,8 +24,8 @@ export async function POST(request: Request) {
       status: 'todo',
     });
 
-    // const toAdmin = [process.env.EMAIL_ONE, process.env.EMAIL_TWO];
-    const toAdmin = [process.env.EMAIL_ONE];
+    const toAdmin = [process.env.EMAIL_ONE, process.env.EMAIL_TWO];
+    // const toAdmin = [process.env.EMAIL_ONE];
     const toCustomer = checkoutInfo.email;
 
     const transporter = nodemailer.createTransport({
