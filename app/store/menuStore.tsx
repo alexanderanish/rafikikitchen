@@ -24,6 +24,7 @@ type CartItem = Pick<MenuItem, 'id' | 'name'> & {
 type CheckoutInfo = {
   name: string
   phone: string
+  email: string;
   date: string
   time_slot: string
 }
@@ -107,6 +108,7 @@ export const useMenuStore = create(
       checkoutInfo: {
         name: '',
         phone: '',
+        email: '',
         date: '',
         time_slot: '',
       },
@@ -128,7 +130,7 @@ export const useMenuStore = create(
 
           if (data.success) {
             // Clear the cart and reset checkout info
-            set({ cart: [], cartCount: 0, checkoutInfo: { name: '', phone: '', date: '', time_slot: '' } })
+            set({ cart: [], cartCount: 0, checkoutInfo: { name: '', phone: '',email: '', date: '', time_slot: '' } })
             return { success: true, orderId: data.orderId }
           } else {
             throw new Error(data.error || 'An error occurred while processing your order.')

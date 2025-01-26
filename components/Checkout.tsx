@@ -11,6 +11,7 @@ import { toast } from "@/components/ui/use-toast"
 import OrderSummary from './OrderSummary'
 import { useEffect } from 'react'
 import { PhoneInput } from './PhoneInput'
+import { EmailInput } from './EmailInput';
 
 export default function Checkout() {
   const router = useRouter()
@@ -80,6 +81,11 @@ export default function Checkout() {
           <PhoneInput
             value={checkoutInfo.phone}
             onChange={(value) => setCheckoutInfo({ ...checkoutInfo, phone: value })}
+          />
+           <EmailInput
+            value={checkoutInfo.email || ''}
+            onChange={(value) => setCheckoutInfo({ ...checkoutInfo, email: value })}
+            // validateEmailApi={validateEmailApi}
           />
           <div className="mb-4">
             <Label htmlFor="date">Date</Label>
