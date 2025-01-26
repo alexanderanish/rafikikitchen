@@ -151,7 +151,7 @@ Rafiki’s Kitchen</p>
       attachments: [
         {
           filename: 'upi.jpeg', // Replace with your image file name
-          path: 'https://www.rafikiskitchen.in/images/upi.jpeg', // Replace with the path to your logo
+          path: 'https://www.rafikiskitchen.in/_next/image?url=%2Fupi.jpeg&w=828&q=75', // Replace with the path to your logo
           cid: 'rafikisLogo', // Content-ID
         },
       ],
