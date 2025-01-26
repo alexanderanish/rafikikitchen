@@ -65,8 +65,15 @@ export default function AdminDashboard() {
       .then((blob) => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
+        // Generate dynamic filename
+        const now = new Date();
+        const formattedDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(
+          now.getDate()
+        ).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}`;
+        const filename = `rafiki_kitchen_order_${formattedDate}.csv`;
         a.href = url;
-        a.download = 'orders.csv';
+
+        a.download = filename;
         document.body.appendChild(a);
         a.click();
         a.remove();
