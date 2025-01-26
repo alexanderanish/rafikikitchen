@@ -14,7 +14,7 @@ type MenuItem = {
   allergens: string[]
 }
 
-type CartItem = Pick<MenuItem, 'id' | 'name'> & { 
+export type CartItem = Pick<MenuItem, 'id' | 'name'> & { 
   cartId: number
   quantity: number
   size: 'full' | 'half'

@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import clientPromise from '../../lib/mongodb';
 import nodemailer from 'nodemailer';
+import { getAdminEmailTemplate, getCustomerEmailTemplate } from '../../../lib/email/templates';
+
 
 interface CartItem {
   id: string;
@@ -60,94 +62,30 @@ export async function POST(request: Request) {
       0
     );
 
-    const emailSubject = `Order Confirmation from Rafiki’s Kitchen for ${checkoutInfo.name}`;
-    const emailText = `
-Hello from Rafiki’s Kitchen!
+    const { subject: adminSubject, text: adminText, html: adminHtml } = getAdminEmailTemplate(
+      cart,
+      checkoutInfo,
+      totalAmount,
+      result.insertedId.toString()
+    );
 
-Thank you for placing an order with us. To confirm your order please make the payment to 9881153034 (Nihal Passanha) and send us a screenshot of the payment.
-
-Here are the details of your order:
-
-${orderDetails}
-
-TOTAL      - Rs ${totalAmount}
-
-Pick up Details:
-Time slot: ${checkoutInfo.time_slot}
-Date: ${checkoutInfo.date}
-Please use the *Send Package* option on *Dunzo* / Pickup or Drop on *Swiggy Genie* / 2wheeler on *Porter*
-
-Pick up address:
-Shunya, 3676, 13th F Main Rd, Channakesahava Nagar, HAL 2nd Stage, Doopanahalli, Indiranagar, Bengaluru, Karnataka 560008
-
-House/Flat no.: 2nd floor
-
-Landmark: above Maritech
-
-Please put the name the order is made in the  *any instructions* space OR in the *Chat* once your runner is confirmed.
-
-Contact no. To use for pick up: 9995887566.
-
-You can organize the pickup at your selected pick-up time.
-
-Thank you for ordering. Looking forward to sharing our sandwiches with you.
-
-Warmth,
-Rafiki’s Kitchen
-    `;
-
-    const emailHtml = `
-<p>Hello from Rafiki’s Kitchen!</p>
-
-<p>Thank you for placing an order with us. To confirm your order please make the payment to <strong>9881153034 (Nihal Passanha)</strong> and send us a screenshot of the payment.</p>
-
-<p>Here are the details of your order:</p>
-
-<p>${orderDetails.replace(/\n/g, '<br>')}</p>
-
-<p><strong>TOTAL - Rs ${totalAmount}</strong></p>
-
-<p><strong>Pick up Details:</strong><br>
-Time slot: ${checkoutInfo.time_slot}<br>
-Date: ${checkoutInfo.date}</p>
-
-<p>You can also use this QR code to pay</p>
-<img src="cid:rafikisLogo" alt="Rafiki's Kitchen Logo" style="width: 150px; height: auto; margin-top: 20px;" />
-
-<p>Please use the <strong>Send Package</strong> option on <strong>Dunzo</strong> / Pickup or Drop on <strong>Swiggy Genie</strong> / 2wheeler on <strong>Porter</strong></p>
-
-<p>Pick up address: <br>
-Shunya, 3676, 13th F Main Rd, Channakesahava Nagar, HAL 2nd Stage, Doopanahalli, Indiranagar, Bengaluru, Karnataka 560008</p>
-
-<p>House/Flat no.: 2nd floor</p>
-<p>Landmark: above Maritech</p>
-
-<p>Please put the name the order is made in the <strong>any instructions</strong> space OR in the <strong>Chat</strong> once your runner is confirmed.</p>
-
-<p>Contact no. To use for pick up: 9995887566.</p>
-
-<p>You can organize the pickup at your selected pick-up time.</p>
-
-<p>Thank you for ordering. Looking forward to sharing our sandwiches with you.</p>
-
-<p>Warmth,<br>
-Rafiki’s Kitchen</p>
-`;
+    const { subject: customerSubject, text: customerText, html: customerHtml } =
+      getCustomerEmailTemplate(cart, checkoutInfo, totalAmount);
 
     const adminMailData = {
       from: `"Rafiki’s Kitchen" <${process.env.GMAIL_USER}>`,
       to: toAdmin.join(', '),
-      subject: `New Order from ${checkoutInfo.name}`,
-      text: emailText,
-      html: emailHtml,
+      subject: adminSubject,
+      text: adminText,
+      html: adminHtml,
     };
 
     const customerMailData = {
       from: `"Rafiki’s Kitchen" <${process.env.GMAIL_USER}>`,
       to: toCustomer,
-      subject: emailSubject,
-      text: emailText,
-      html: emailHtml,
+      subject: customerSubject,
+      text: customerText,
+      html: customerHtml,
       attachments: [
         {
           filename: 'upi.jpeg', // Replace with your image file name
@@ -162,6 +100,7 @@ Rafiki’s Kitchen</p>
       transporter.sendMail(adminMailData),
       transporter.sendMail(customerMailData),
     ]);
+
 
     return NextResponse.json({ success: true, orderId: result.insertedId });
   } catch (e) {
