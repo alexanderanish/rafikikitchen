@@ -4,6 +4,7 @@ import localFont from 'next/font/local'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import Head from "next/head";
+import { Analytics } from '@vercel/analytics/next';
 
 const inter = Inter({ subsets: ['latin'] })
 // const anvir = localFont({
@@ -90,6 +91,7 @@ export default function RootLayout({
         <Header />
         <main className="flex-grow">{children}</main>
         <Footer />
+        <Analytics />
       </body>
     </html>
   )
