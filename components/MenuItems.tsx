@@ -117,7 +117,7 @@ const menuItems = [
     name: 'DORITO',
     description: "Boiled Eggs. Kewpie Mayo. Shokupan (Japanese Milk Bread).",
     price: 300,
-    images: ['/egg_1.JPG'],
+    images: ['/egg_2.jpeg'],
     vegetarian: false,
     allergens: ["Egg", "Mayonnaise"],
     ingredients: ['Boiled Eggs', 'Kewpie Mayo', 'Shokupan (Japanese Milk Bread)'],
