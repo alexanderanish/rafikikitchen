@@ -61,17 +61,23 @@ type Order = {
 export default function LiveOrderManagement() {
   const [orders, setOrders] = useState<Order[]>([])
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string>('all')
-  const [selectedDate, setSelectedDate] = useState<string>(format(new Date(), 'dd-MM-yyyy'))
+  const [selectedDate, setSelectedDate] = useState<string>()
   const [availableDates, setAvailableDates] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
   const fetchAvailableDates = async () => {
     try {
-      const response = await fetch('/api/live-orders/available-dates')
+      const response = await fetch('/api/live-orders/available-dates', {
+        cache: "no-store", 
+      })
       if (!response.ok) throw new Error('Failed to fetch available dates')
       const data = await response.json()
       setAvailableDates(data.dates)
+      if (data.dates.length > 0) {
+        // Ensure format consistency when setting selectedDate
+        setSelectedDate(format(parse(data.dates[data.dates.length - 1], 'dd-MM-yyyy', new Date()), 'dd-MM-yyyy'));
+      }
     } catch (err) {
       console.error('Failed to fetch available dates:', err)
       toast({
@@ -83,6 +89,9 @@ export default function LiveOrderManagement() {
   }
 
   const fetchOrders = async () => {
+    if (!selectedDate || !availableDates.includes(selectedDate)) {
+      return; // Do nothing if selectedDate is not available
+    }
     setIsLoading(true)
     setError(null)
     try {
@@ -339,9 +348,9 @@ export default function LiveOrderManagement() {
     <div className="container mx-auto py-10">
       {/* <h1 className="text-3xl font-bold mb-6">Live Order Management</h1> */}
       <div className="mb-6 flex items-center space-x-4">
-        <Select  onValueChange={setSelectedDate}>
+        <Select value={selectedDate}  onValueChange={setSelectedDate}>
           <SelectTrigger className="w-[200px]">
-            <SelectValue placeholder="Select an order date" />
+          <SelectValue>{selectedDate || "Select an order date"}</SelectValue>
           </SelectTrigger>
           <SelectContent>
             {availableDates.map((date) => (

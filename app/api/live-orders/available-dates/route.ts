@@ -24,7 +24,7 @@ export async function GET() {
     
       return dateA.getTime() - dateB.getTime(); 
     });
-    console.log(dates, "dates")
+    // console.log(dates, "dates")
 
     return NextResponse.json({ dates })
   } catch (error) {
