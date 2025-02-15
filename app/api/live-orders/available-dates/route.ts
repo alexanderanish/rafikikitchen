@@ -26,7 +26,12 @@ export async function GET() {
     });
     // console.log(dates, "dates")
 
-    return NextResponse.json({ dates })
+    // return NextResponse.json({ dates })
+    return NextResponse.json({ dates }, {
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+      },
+    });
   } catch (error) {
     console.error('Database query error:', error)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
