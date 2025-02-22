@@ -148,25 +148,6 @@ export default function LiveOrderManagement() {
     }
   }
 
-  // const getSandwichSummary = () => {
-  //   const summary: { [key: string]: number } = {}
-  //   if (!orders || !Array.isArray(orders)) return []
-  
-  //   // Filter orders by selected time slot
-  //   const filteredOrders = selectedTimeSlot === 'all'
-  //     ? orders
-  //     : orders.filter(order => order.checkoutInfo.time_slot === selectedTimeSlot)
-  
-  //   filteredOrders.forEach(order => {
-  //     if (order.status !== 'done') {
-  //       order.cart.forEach(item => {
-  //         summary[item.name] = (summary[item.name] || 0) + item.quantity
-  //       })
-  //     }
-  //   })
-  
-  //   return Object.entries(summary).sort((a, b) => b[1] - a[1])
-  // }
 
   const getSandwichSummary = () => {
     const summary: {
