@@ -70,6 +70,7 @@ export default function LiveOrderManagement() {
     try {
       const response = await fetch('/api/live-orders/available-dates', {
         cache: "no-store", 
+        next: { revalidate: 0 },
       })
       if (!response.ok) throw new Error('Failed to fetch available dates')
       const data = await response.json()
