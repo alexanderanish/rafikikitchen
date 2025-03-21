@@ -155,7 +155,7 @@ function PaymentRequestContent() {
                 <h2 className="font-medium text-gray-800 mb-3">Payment Instructions:</h2>
                 <ol className="text-gray-600 text-sm space-y-2 list-decimal pl-5">
                   <li>Open any UPI app (Google Pay, PhonePe, Paytm, etc.)</li>
-                  <li>Scan the QR code above or use the UPI ID provided</li>
+                  <li>Scan the QR code below or use the UPI ID provided</li>
                   <li>Verify the payment amount: ₹{order?.totalAmount.toFixed(2)}</li>
                   <li>Complete the payment and wait for confirmation</li>
                 </ol>
