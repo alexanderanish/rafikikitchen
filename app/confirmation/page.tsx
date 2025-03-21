@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { ArrowLeft, Copy, Check, RefreshCw, ShoppingBag } from 'lucide-react';
@@ -28,7 +28,7 @@ interface Order {
   createdAt: string;
 }
 
-export default function PaymentRequest() {
+function PaymentRequestContent() {
   const searchParams = useSearchParams();
   const orderNumber = searchParams.get('orderNumber') || 'Unknown';
   
@@ -44,7 +44,7 @@ export default function PaymentRequest() {
         setLoading(true);
         
         // Get orderId from the URL parameter
-        const orderId = searchParams.get('orderId'); // Use orderId instead of orderNumber
+        const orderId = searchParams.get('orderId');
         console.log('Fetching order details for Order ID:', orderId);
         if (!orderId) {
           console.error('Order ID is missing');
@@ -57,12 +57,11 @@ export default function PaymentRequest() {
         if (!response.ok) {
           console.error('Error fetching order details:', response.statusText);
           throw new Error('Failed to fetch order details');
-          
         }
         
         const data = await response.json();
         console.log('Fetched order details:', data);
-        setOrder(data.order); // Assuming the API returns { order: {...} }
+        setOrder(data.order);
         setError(null);
       } catch (err) {
         console.error('Error fetching order:', err);
@@ -72,13 +71,11 @@ export default function PaymentRequest() {
       }
     };
     fetchOrderDetails();
-    
-  }, [orderNumber]);
+  }, [searchParams]); // Fixed dependency array
   
   // Generate UPI URI for QR code
   const generateUpiUri = () => {
     const amount = order?.totalAmount.toString() || '0';
-    // UPI URI format: upi://pay?pa=UPI_ID&pn=MERCHANT_NAME&am=AMOUNT&tr=TRANSACTION_REF&tn=TRANSACTION_NOTE
     return `upi://pay?pa=${UPI_ID}&pn=Rafiki%20Kitchen&am=${amount}&tr=${orderNumber}&tn=Order%20${orderNumber}`;
   };
   
@@ -119,7 +116,6 @@ export default function PaymentRequest() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      
       {/* Main Content */}
       <main className="flex-grow flex items-center justify-center p-6">
         <div className="bg-white rounded-lg shadow-md p-8 max-w-md w-full">
@@ -130,13 +126,9 @@ export default function PaymentRequest() {
             </div>
           ) : (
             <>
+              {/* Rest of your component content */}
               <div className="text-center mb-6">
                 <h1 className="text-2xl font-bold text-gray-800">Complete Your Payment</h1>
-                {/* <p className="text-gray-600 mt-2">Order #{orderNumber}</p>
-                <div className="mt-2 text-sm bg-green-50 text-green-700 py-1 px-2 rounded inline-flex items-center">
-                  <ShoppingBag size={14} className="mr-1" /> 
-                  {order?.items?.length || 0} items
-                </div> */}
               </div>
               
               {/* Order Summary */}
@@ -157,6 +149,7 @@ export default function PaymentRequest() {
                   <span className="text-xl font-bold text-gray-900">₹{order?.totalAmount.toFixed(2)}</span>
                 </div>
               </div>
+              
               {/* Instructions */}
               <div className="mb-6">
                 <h2 className="font-medium text-gray-800 mb-3">Payment Instructions:</h2>
@@ -164,10 +157,10 @@ export default function PaymentRequest() {
                   <li>Open any UPI app (Google Pay, PhonePe, Paytm, etc.)</li>
                   <li>Scan the QR code above or use the UPI ID provided</li>
                   <li>Verify the payment amount: ₹{order?.totalAmount.toFixed(2)}</li>
-                  {/* <li>Confirm the merchant name shows as "Rafiki Kitchen"</li> */}
                   <li>Complete the payment and wait for confirmation</li>
                 </ol>
               </div>
+              
               <div className="border border-gray-200 rounded-lg p-6 mb-6 bg-gray-50">
                 {/* UPI ID Section */}
                 <div className="mb-6">
@@ -209,25 +202,8 @@ export default function PaymentRequest() {
                 </div>
               </div>
               
-              {/* Customer Details (Optional)
-              {order?.customerName && (
-                <div className="mb-6 text-sm border border-gray-200 rounded-lg p-4 bg-gray-50">
-                  <h2 className="font-medium text-gray-800 mb-2">Delivery Details</h2>
-                  <p className="text-gray-700">{order.customerName}</p>
-                  <p className="text-gray-700">{order.customerPhone}</p>
-                  <p className="text-gray-700">{order.address}</p>
-                </div>
-              )} */}
-
-              
               {/* Action Buttons */}
               <div className="flex flex-col space-y-3">
-                {/* <Link 
-                  href={`/order-status?orderNumber=${orderNumber}`}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-md text-center font-medium"
-                >
-                  I've Completed the Payment
-                </Link> */}
                 <Link 
                   href="/"
                   className="flex items-center justify-center text-gray-600 hover:text-gray-800"
@@ -240,7 +216,22 @@ export default function PaymentRequest() {
           )}
         </div>
       </main>
-
     </div>
+  );
+}
+
+// Wrap the component that uses useSearchParams in a Suspense boundary
+export default function PaymentRequest() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6">
+        <div className="flex flex-col items-center justify-center py-12">
+          <RefreshCw size={32} className="text-green-600 animate-spin mb-4" />
+          <p className="text-gray-600">Loading payment details...</p>
+        </div>
+      </div>
+    }>
+      <PaymentRequestContent />
+    </Suspense>
   );
 }
