@@ -1,34 +1,246 @@
-'use client'
+'use client';
 
-import { useSearchParams } from 'next/navigation'
-import Link from 'next/link'
-import { CheckCircle } from 'lucide-react'
+import { useEffect, useState } from 'react';
+import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
+import { ArrowLeft, Copy, Check, RefreshCw, ShoppingBag } from 'lucide-react';
+import Link from 'next/link';
+import {QRCodeSVG} from 'qrcode.react';
 
-import { Suspense } from 'react'
-
-const ConfirmationContent = () => {
-  const searchParams = useSearchParams()
-  const orderId = searchParams.get('orderId')
-
-  return (
-    <div className="container mx-auto px-4 py-16 text-center">
-      <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-6" />
-      <h1 className="text-3xl font-bold mb-4">Order Confirmed!</h1>
-      <p className="text-xl mb-2">Thank you for your order.</p>
-      {/* <p className="text-lg mb-8">Your order ID is: {orderId}</p> */}
-      <p className="text-lg mb-8">We will be in touch via Email & Whatsapp with instructions for payment and pick up.</p>
-      <p className="mb-8">Remember to book a delivery service to pick up your order at the selected slot.</p>
-      <Link href="/" className="bg-stone-800 text-white px-6 py-3 rounded-md inline-block hover:bg-stone-700 transition-colors">
-        Back to Home
-      </Link>
-    </div>
-  )
+// Define the Order type based on your MongoDB schema
+interface OrderItem {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
 }
 
-export default function Confirmation() {
+interface Order {
+  _id: string;
+  orderNumber: string;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+  address: string;
+  items: OrderItem[];
+  totalAmount: number;
+  status: string;
+  createdAt: string;
+}
+
+export default function PaymentRequest() {
+  const searchParams = useSearchParams();
+  const orderNumber = searchParams.get('orderNumber') || 'Unknown';
+  
+  const [order, setOrder] = useState<Order | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+  const UPI_ID = '9881153034@idfcfirst';
+  
+  useEffect(() => {
+    const fetchOrderDetails = async () => {
+      try {
+        setLoading(true);
+        
+        // Get orderId from the URL parameter
+        const orderId = searchParams.get('orderId'); // Use orderId instead of orderNumber
+        console.log('Fetching order details for Order ID:', orderId);
+        if (!orderId) {
+          console.error('Order ID is missing');
+          throw new Error('Order ID is missing');
+        }
+
+        // Updated endpoint path
+        const response = await fetch(`/api/orders/${orderId}`);
+        
+        if (!response.ok) {
+          console.error('Error fetching order details:', response.statusText);
+          throw new Error('Failed to fetch order details');
+          
+        }
+        
+        const data = await response.json();
+        console.log('Fetched order details:', data);
+        setOrder(data.order); // Assuming the API returns { order: {...} }
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching order:', err);
+        setError('Unable to load order details. Please contact support.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchOrderDetails();
+    
+  }, [orderNumber]);
+  
+  // Generate UPI URI for QR code
+  const generateUpiUri = () => {
+    const amount = order?.totalAmount.toString() || '0';
+    // UPI URI format: upi://pay?pa=UPI_ID&pn=MERCHANT_NAME&am=AMOUNT&tr=TRANSACTION_REF&tn=TRANSACTION_NOTE
+    return `upi://pay?pa=${UPI_ID}&pn=Rafiki%20Kitchen&am=${amount}&tr=${orderNumber}&tn=Order%20${orderNumber}`;
+  };
+  
+  const handleCopyUPI = () => {
+    navigator.clipboard.writeText(UPI_ID);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleCopyUpiLink = () => {
+    navigator.clipboard.writeText(generateUpiUri());
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6">
+        <div className="bg-white rounded-lg shadow-md p-8 max-w-md w-full text-center">
+          <div className="text-red-500 mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h1 className="text-xl font-bold text-gray-800 mb-2">Order Not Found</h1>
+          <p className="text-gray-600 mb-6">{error}</p>
+          <Link 
+            href="/"
+            className="inline-flex items-center justify-center bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md"
+          >
+            <ArrowLeft size={16} className="mr-2" />
+            Return to Home
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <ConfirmationContent />
-    </Suspense>
-  )
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      
+      {/* Main Content */}
+      <main className="flex-grow flex items-center justify-center p-6">
+        <div className="bg-white rounded-lg shadow-md p-8 max-w-md w-full">
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-12">
+              <RefreshCw size={32} className="text-green-600 animate-spin mb-4" />
+              <p className="text-gray-600">Loading order details...</p>
+            </div>
+          ) : (
+            <>
+              <div className="text-center mb-6">
+                <h1 className="text-2xl font-bold text-gray-800">Complete Your Payment</h1>
+                {/* <p className="text-gray-600 mt-2">Order #{orderNumber}</p>
+                <div className="mt-2 text-sm bg-green-50 text-green-700 py-1 px-2 rounded inline-flex items-center">
+                  <ShoppingBag size={14} className="mr-1" /> 
+                  {order?.items?.length || 0} items
+                </div> */}
+              </div>
+              
+              {/* Order Summary */}
+              <div className="border border-gray-200 rounded-lg p-4 mb-6 bg-gray-50">
+                <h2 className="font-medium text-gray-800 mb-3">Order Summary</h2>
+                <div className="space-y-2 max-h-32 overflow-y-auto mb-3">
+                  {order?.items?.map((item, index) => (
+                    <div key={index} className="flex justify-between text-sm">
+                      <span className="text-gray-600">
+                        {item.quantity} x {item.name}
+                      </span>
+                      <span className="text-gray-800 font-medium">₹{(item.price * item.quantity).toFixed(2)}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="border-t border-gray-200 pt-3 mt-3 flex justify-between items-center">
+                  <span className="text-gray-700 font-medium">Total Amount</span>
+                  <span className="text-xl font-bold text-gray-900">₹{order?.totalAmount.toFixed(2)}</span>
+                </div>
+              </div>
+              {/* Instructions */}
+              <div className="mb-6">
+                <h2 className="font-medium text-gray-800 mb-3">Payment Instructions:</h2>
+                <ol className="text-gray-600 text-sm space-y-2 list-decimal pl-5">
+                  <li>Open any UPI app (Google Pay, PhonePe, Paytm, etc.)</li>
+                  <li>Scan the QR code above or use the UPI ID provided</li>
+                  <li>Verify the payment amount: ₹{order?.totalAmount.toFixed(2)}</li>
+                  {/* <li>Confirm the merchant name shows as "Rafiki Kitchen"</li> */}
+                  <li>Complete the payment and wait for confirmation</li>
+                </ol>
+              </div>
+              <div className="border border-gray-200 rounded-lg p-6 mb-6 bg-gray-50">
+                {/* UPI ID Section */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">UPI ID</label>
+                  <div className="flex items-center">
+                    <div className="flex-grow bg-white border border-gray-300 rounded-l-md px-4 py-2 text-gray-700">
+                      {UPI_ID}
+                    </div>
+                    <button 
+                      onClick={handleCopyUPI}
+                      className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-r-md flex items-center justify-center"
+                    >
+                      {copied ? <Check size={18} /> : <Copy size={18} />}
+                    </button>
+                  </div>
+                </div>
+                
+                {/* QR Code Section */}
+                <div className="text-center">
+                  <p className="text-sm font-medium text-gray-700 mb-2">Scan to pay</p>
+                  <div className="flex justify-center">
+                    <div className="bg-white p-3 border border-gray-300 rounded-md inline-block">
+                      <QRCodeSVG 
+                        value={generateUpiUri()}
+                        size={180}
+                        level="H"
+                        includeMargin={true}
+                        bgColor="#FFFFFF"
+                        fgColor="#000000"
+                      />
+                    </div>
+                  </div>
+                  <button 
+                    onClick={handleCopyUpiLink}
+                    className="mt-3 text-sm text-green-600 hover:text-green-800 flex items-center justify-center mx-auto"
+                  >
+                    <Copy size={14} className="mr-1" /> Copy UPI payment link
+                  </button>
+                </div>
+              </div>
+              
+              {/* Customer Details (Optional)
+              {order?.customerName && (
+                <div className="mb-6 text-sm border border-gray-200 rounded-lg p-4 bg-gray-50">
+                  <h2 className="font-medium text-gray-800 mb-2">Delivery Details</h2>
+                  <p className="text-gray-700">{order.customerName}</p>
+                  <p className="text-gray-700">{order.customerPhone}</p>
+                  <p className="text-gray-700">{order.address}</p>
+                </div>
+              )} */}
+
+              
+              {/* Action Buttons */}
+              <div className="flex flex-col space-y-3">
+                {/* <Link 
+                  href={`/order-status?orderNumber=${orderNumber}`}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-md text-center font-medium"
+                >
+                  I've Completed the Payment
+                </Link> */}
+                <Link 
+                  href="/"
+                  className="flex items-center justify-center text-gray-600 hover:text-gray-800"
+                >
+                  <ArrowLeft size={16} className="mr-2" />
+                  Return to Home
+                </Link>
+              </div>
+            </>
+          )}
+        </div>
+      </main>
+
+    </div>
+  );
 }
