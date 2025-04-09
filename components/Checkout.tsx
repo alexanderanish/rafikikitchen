@@ -1,6 +1,6 @@
 'use client'
 
-import { use, useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useMenuStore } from '@/app/store/menuStore'
 import { Button } from "@/components/ui/button"
@@ -9,7 +9,6 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "@/components/ui/use-toast"
 import OrderSummary from './OrderSummary'
-import { useEffect } from 'react'
 import { PhoneInput } from './PhoneInput'
 import { EmailInput } from './EmailInput';
 
@@ -17,10 +16,49 @@ export default function Checkout() {
   const router = useRouter()
   const { cart, checkoutInfo, setCheckoutInfo, placeOrder } = useMenuStore()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  // useEffect(() => {
-  //   setCheckoutInfo({ date: '08-09-2024' })
-  //   //eslint-disable-next-line react-hooks/exhaustive-deps
-  // },[])
+  const [timeSlots, setTimeSlots] = useState<{value: string, label: string}[]>([])
+  const [mounted, setMounted] = useState(false)
+  
+  // Predefined date range - static to avoid hydration mismatch
+  const availableDates = [
+    { value: "10-04-2025", label: "Thursday, 10th April, 2025" },
+    { value: "11-04-2025", label: "Friday, 11th April, 2025" },
+    { value: "12-04-2025", label: "Saturday, 12th April, 2025" },
+    { value: "13-04-2025", label: "Sunday, 13th April, 2025" },
+    { value: "14-04-2025", label: "Monday, 14th April, 2025" },
+    { value: "15-04-2025", label: "Tuesday, 15th April, 2025" },
+    { value: "16-04-2025", label: "Wednesday, 16th April, 2025" },
+    { value: "17-04-2025", label: "Thursday, 17th April, 2025" }
+  ];
+  
+  // Prevent hydration mismatch by only rendering client-side
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+  
+  // Update time slots based on selected date
+  useEffect(() => {
+    if (checkoutInfo.date) {
+      const date = new Date(checkoutInfo.date.split('-').reverse().join('-'));
+      const day = date.getDay(); // 0 = Sunday, 6 = Saturday
+      
+      // Weekend slots (Saturday and Sunday)
+      if (day === 0 || day === 6) {
+        setTimeSlots([
+          { value: '12:00', label: '12:00 PM' },
+          { value: '13:00', label: '01:00 PM' },
+          { value: '14:00', label: '02:00 PM' }
+        ]);
+      } 
+      // Weekday slots (Monday to Friday)
+      else {
+        setTimeSlots([
+          { value: '19:00', label: '07:00 PM' },
+          { value: '20:00', label: '08:00 PM' }
+        ]);
+      }
+    }
+  }, [checkoutInfo.date]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -43,6 +81,11 @@ export default function Checkout() {
     }
   }
 
+  // Handle empty cart
+  if (!mounted) {
+    return null; // Return nothing on server-side render to prevent hydration mismatch
+  }
+
   if (cart.length === 0) {
     return (
       <div className="text-center py-12">
@@ -62,34 +105,26 @@ export default function Checkout() {
             <Label htmlFor="name">Name</Label>
             <Input
               id="name"
-              value={checkoutInfo.name}
-              onChange={(e) => setCheckoutInfo({ name: e.target.value })}
+              value={checkoutInfo.name || ''}
+              onChange={(e) => setCheckoutInfo({ ...checkoutInfo, name: e.target.value })}
               required
             />
           </div>
-          {/* <div className="mb-4">
-            <Label htmlFor="phone">Phone Number</Label>
-            <Input
-              id="phone"
-              type="tel"
-              value={checkoutInfo.phone}
-              onChange={(e) => setCheckoutInfo({ phone: e.target.value })}
-              required
-            />
-            
-          </div> */}
           <PhoneInput
-            value={checkoutInfo.phone}
+            value={checkoutInfo.phone || ''}
             onChange={(value) => setCheckoutInfo({ ...checkoutInfo, phone: value })}
           />
-           <EmailInput
+          <EmailInput
             value={checkoutInfo.email || ''}
             onChange={(value) => setCheckoutInfo({ ...checkoutInfo, email: value })}
-            // validateEmailApi={validateEmailApi}
           />
           <div className="mb-4">
             <Label htmlFor="date">Date</Label>
-            <Select required onValueChange={(value)=> setCheckoutInfo({...checkoutInfo, date:value})}>  
+            <Select 
+              required 
+              onValueChange={(value) => setCheckoutInfo({...checkoutInfo, date: value, time_slot: ''})}
+              value={checkoutInfo.date}
+            >  
               <SelectTrigger
                 id="date"
                 className="items-start"
@@ -97,64 +132,42 @@ export default function Checkout() {
                 <SelectValue placeholder="Select a date" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="22-03-2025">
-                  <div className="flex items-start gap-3">
-                    <div className="grid gap-0.5">
-                      <p>
-                      Saturday, 22nd March, 2025
-                      </p>
+                {availableDates.map((date) => (
+                  <SelectItem key={date.value} value={date.value}>
+                    <div className="flex items-start gap-3">
+                      <div className="grid gap-0.5">
+                        <p>{date.label}</p>
+                      </div>
                     </div>
-                  </div>
-                </SelectItem>
-                <SelectItem value="23-03-2025">
-                  <div className="flex items-start gap-3">
-                    <div className="grid gap-0.5">
-                      <p>
-                      Sunday, 23th March, 2025
-                      </p>
-                    </div>
-                  </div>
-                </SelectItem>
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
           <div className="mb-4">
             <Label htmlFor="time_slot">Time Slot</Label>
-            <Select required onValueChange={(value) => setCheckoutInfo({ time_slot: value })}>  
+            <Select
+              required 
+              disabled={!checkoutInfo.date}
+              onValueChange={(value) => setCheckoutInfo({ ...checkoutInfo, time_slot: value })}
+              value={checkoutInfo.time_slot}
+            >  
               <SelectTrigger
                 id="time_slot"
                 className="items-start"
               >
-                <SelectValue placeholder="Select a time slot" />
+                <SelectValue placeholder={!checkoutInfo.date ? "Select a date first" : "Select a time slot"} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="12:00">
-                  <div className="flex items-start gap-3">
-                    <div className="grid gap-0.5">
-                      <p>
-                      12:00 PM
-                      </p>
+                {timeSlots.map(slot => (
+                  <SelectItem key={slot.value} value={slot.value}>
+                    <div className="flex items-start gap-3">
+                      <div className="grid gap-0.5">
+                        <p>{slot.label}</p>
+                      </div>
                     </div>
-                  </div>
-                </SelectItem>
-                <SelectItem value="13:00">
-                  <div className="flex items-start gap-3">
-                    <div className="grid gap-0.5">
-                      <p>
-                      01:00 PM
-                      </p>
-                    </div>
-                  </div>
-                </SelectItem>
-                <SelectItem value="14:00">
-                  <div className="flex items-start gap-3">
-                    <div className="grid gap-0.5">
-                      <p>
-                      02:00 PM
-                      </p>
-                    </div>
-                  </div>
-                </SelectItem>
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -164,7 +177,7 @@ export default function Checkout() {
         </form>
         <div className="mt-4 p-4 bg-yellow-100 rounded-md">
           <p className="text-sm text-yellow-800">
-          <strong>Note:</strong> Customers will need to book a delivery service to pick up their order at the selected slot. (e.g. Dunzo, Swiggy Genie, Porter, etc)
+            <strong>Note:</strong> Customers will need to book a delivery service to pick up their order at the selected slot. (e.g. Dunzo, Swiggy Genie, Porter, etc)
           </p>
         </div>
       </div>
