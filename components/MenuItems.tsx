@@ -80,17 +80,17 @@ const menuItems = [
     allergens: ["Eggplant", "Sesame Seeds", "Chickpeas", "Milk", "Curd"],
     ingredients: ['Baked Tahini Eggplant', 'Hummus', 'Labneh', 'Garlic Toum', 'Spiced Tomato Jam', 'Mozarella','Basil Leaves','Baguette'],
   },
-  // {
-  //   id: 4,
-  //   name: 'MESALI',
-  //   description: "Goan Pork Roast. Kasundi Mustard. Jiardenera. Kewpie Mayo. French Baguette.",
-  //   price: 400,
-  //   halfPrice: 300,
-  //   images: ['/pork_new_1.JPG'],
-  //   vegetarian: false,
-  //   allergens: ["Pork", "Mustard Seeds", "Egg", "Mayonnaise"],
-  //   ingredients: ['Goan Pork Roast', 'Kasundi Mustard', 'Jiardenera', 'Kewpie Mayo', 'French Baguette'],
-  // },
+  {
+    id: 4,
+    name: 'MESALI',
+    description: "Goan Pork Roast. Kasundi Mustard. Jiardenera. Kewpie Mayo. French Baguette.",
+    price: 400,
+    halfPrice: 300,
+    images: ['/pork_new_1.JPG'],
+    vegetarian: false,
+    allergens: ["Pork", "Mustard Seeds", "Egg", "Mayonnaise"],
+    ingredients: ['Goan Pork Roast', 'Kasundi Mustard', 'Jiardenera', 'Kewpie Mayo', 'French Baguette'],
+  },
   {
     id: 5,
     name: 'LORRY',
@@ -102,26 +102,26 @@ const menuItems = [
     allergens: ["Buff", "Mustard Seeds", "Egg", "Mayonnaise"],
     ingredients: ['Goan Buff Roast', 'Kasundi Mustard', 'Jiardenera', 'Kewpie Mayo', 'French Baguette'],
   },
-  // {
-  //   id: 6,
-  //   name: 'SO',
-  //   description: "Beetroot. Potato. Tomato. Cucumber. Onion. Slice Cheese. Coriander Chutney. Peanut Chutney. Ridge gourd Chutney. Shokupan (Japanese Milk Bread).",
-  //   price: 250,
-  //   images: ['/bombay_1.JPG'],
-  //   vegetarian: true,
-  //   allergens: ["Cheese", "Peanuts", "Gluten"],
-  //   ingredients: ['Beetroot', 'Potato', 'Tomato', 'Cucumber', 'Onion', 'Slice Cheese', 'Coriander Chutney', 'Peanut Chutney', 'Ridge Gourd Chutney', 'Shokupan (Japanese Milk Bread)'],
-  // },
-  // {
-  //   id: 7,
-  //   name: 'DORITO',
-  //   description: "Boiled Eggs. Kewpie Mayo. Shokupan (Japanese Milk Bread).",
-  //   price: 300,
-  //   images: ['/egg_2.jpeg'],
-  //   vegetarian: false,
-  //   allergens: ["Egg", "Mayonnaise"],
-  //   ingredients: ['Boiled Eggs', 'Kewpie Mayo', 'Shokupan (Japanese Milk Bread)'],
-  // },
+  {
+    id: 6,
+    name: 'SO',
+    description: "Beetroot. Potato. Tomato. Cucumber. Onion. Slice Cheese. Coriander Chutney. Peanut Chutney. Ridge gourd Chutney. Shokupan (Japanese Milk Bread).",
+    price: 250,
+    images: ['/bombay_1.JPG'],
+    vegetarian: true,
+    allergens: ["Cheese", "Peanuts", "Gluten"],
+    ingredients: ['Beetroot', 'Potato', 'Tomato', 'Cucumber', 'Onion', 'Slice Cheese', 'Coriander Chutney', 'Peanut Chutney', 'Ridge Gourd Chutney', 'Shokupan (Japanese Milk Bread)'],
+  },
+  {
+    id: 7,
+    name: 'DORITO',
+    description: "Boiled Eggs. Kewpie Mayo. Shokupan (Japanese Milk Bread).",
+    price: 300,
+    images: ['/egg_2.jpeg'],
+    vegetarian: false,
+    allergens: ["Egg", "Mayonnaise"],
+    ingredients: ['Boiled Eggs', 'Kewpie Mayo', 'Shokupan (Japanese Milk Bread)'],
+  },
 ]
 
 function Carousel({ images }: { images: string[] }) {
@@ -220,6 +220,11 @@ export default function MenuItems() {
           const cartItemHalf = cart.find((cartItem) => cartItem.id === item.id && cartItem.size === 'half')
           const quantityFull = cartItemFull?.quantity || 0
           const quantityHalf = cartItemHalf?.quantity || 0
+
+          //only return if id is 1,2,3,5
+          if (item.id !== 1 && item.id !== 2 && item.id !== 3 && item.id !== 5) {
+            return null
+          }
 
           return (
             <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
