@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react'
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-interface PhoneInputProps {
+export interface PhoneInputProps {
   value: string
   onChange: (value: string) => void
+  disabled?: boolean
 }
 
-export function PhoneInput({ value, onChange }: PhoneInputProps) {
+export function PhoneInput({ value, onChange, disabled = false }: PhoneInputProps) {
   const [phoneNumber, setPhoneNumber] = useState(value)
 
   useEffect(() => {
@@ -39,6 +40,7 @@ export function PhoneInput({ value, onChange }: PhoneInputProps) {
           pattern="[0-9]{10}"
           maxLength={10}
           placeholder="Enter 10 digit number"
+          disabled={disabled}
         />
       </div>
       {phoneNumber.length > 0 && phoneNumber.length < 10 && (

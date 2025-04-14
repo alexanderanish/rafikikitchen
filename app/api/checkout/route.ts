@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import clientPromise from '../../lib/mongodb';
 import nodemailer from 'nodemailer';
 import { getAdminEmailTemplate, getCustomerEmailTemplate } from '../../../lib/email/templates';
+import { getTotalSandwichesForDate, DAILY_SANDWICH_LIMIT } from '../../lib/orders';
 
 
 interface CartItem {
@@ -13,9 +14,27 @@ interface CartItem {
 
 export async function POST(request: Request) {
   try {
+    const { cart, checkoutInfo } = await request.json();
+
+    // Calculate total sandwiches in current order
+    const orderSandwichCount = cart.reduce((total: number, item: CartItem) => total + item.quantity, 0);
+
+    // Get current total for the day
+    const currentDayTotal = await getTotalSandwichesForDate(checkoutInfo.date);
+    
+    // Check if adding this order would exceed the daily limit
+    if (currentDayTotal + orderSandwichCount > DAILY_SANDWICH_LIMIT) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: `Sorry, we can only make ${DAILY_SANDWICH_LIMIT} sandwiches per day. There are already ${currentDayTotal} orders for this date.` 
+        },
+        { status: 400 }
+      );
+    }
+
     const client = await clientPromise;
     const db = client.db('rafiki_kitchen');
-    const { cart, checkoutInfo } = await request.json();
 
     const result = await db.collection('orders').insertOne({
       cart,
@@ -73,7 +92,7 @@ export async function POST(request: Request) {
       getCustomerEmailTemplate(cart, checkoutInfo, totalAmount);
 
     const adminMailData = {
-      from: `"Rafiki’s Kitchen" <${process.env.GMAIL_USER}>`,
+      from: `"Rafiki's Kitchen" <${process.env.GMAIL_USER}>`,
       to: toAdmin.join(', '),
       subject: adminSubject,
       text: adminText,
@@ -81,7 +100,7 @@ export async function POST(request: Request) {
     };
 
     const customerMailData = {
-      from: `"Rafiki’s Kitchen" <${process.env.GMAIL_USER}>`,
+      from: `"Rafiki's Kitchen" <${process.env.GMAIL_USER}>`,
       to: toCustomer,
       subject: customerSubject,
       text: customerText,

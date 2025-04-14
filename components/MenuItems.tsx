@@ -46,7 +46,7 @@ import { PlusCircle, MinusCircle, ChevronLeft, ChevronRight, ShoppingCart } from
 //   },
 // ]
 
-const menuItems = [
+export const menuItems = [
   {
     id: 1,
     name: 'Nala',
@@ -186,8 +186,8 @@ export default function MenuItems() {
   const [removeDialogItem, setRemoveDialogItem] = useState<typeof cart[0] | null>(null)  // State to track item for remove dialog
 
   const filteredMenuItems = menuItems.filter(item =>
-    item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.description.toLowerCase().includes(searchQuery.toLowerCase())
+    item.name.toLowerCase().includes((searchQuery || '').toLowerCase()) ||
+    item.description.toLowerCase().includes((searchQuery || '').toLowerCase())
   )
 
   const router = useRouter()
@@ -201,13 +201,13 @@ export default function MenuItems() {
     if (item.quantity > 1) {
       setRemoveDialogItem(item) // Show pop-up when there are multiple items
     } else {
-      removeFromCart(item.cartId) // Directly remove if there is only one
+      removeFromCart(item.id, item.size) // Directly remove if there is only one
     }
   }
 
   const confirmRemoveItem = () => {
     if (removeDialogItem) {
-      removeFromCart(removeDialogItem.cartId)
+      removeFromCart(removeDialogItem.id, removeDialogItem.size)
       setRemoveDialogItem(null)
     }
   }

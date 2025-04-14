@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-interface EmailInputProps {
+export interface EmailInputProps {
   value: string;
   onChange: (value: string) => void;
+  disabled?: boolean;
 }
 
-export function EmailInput({ value, onChange }: EmailInputProps) {
+export function EmailInput({ value, onChange, disabled = false }: EmailInputProps) {
   const [email, setEmail] = useState(value);
   const [isValid, setIsValid] = useState(true);
   const [error, setError] = useState('');
@@ -45,6 +46,7 @@ export function EmailInput({ value, onChange }: EmailInputProps) {
         onChange={handleChange}
         required
         placeholder="Enter your email address"
+        disabled={disabled}
       />
       {!isValid && <p className="mt-1 text-sm text-red-500">{error}</p>}
     </div>

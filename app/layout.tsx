@@ -1,10 +1,13 @@
+'use client'
+
 import './globals.css'
+import { Metadata } from 'next'
+import { Analytics } from '@vercel/analytics/react'
 import { Inter } from 'next/font/google'
 import localFont from 'next/font/local'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import Head from "next/head";
-import { Analytics } from '@vercel/analytics/next';
 
 const inter = Inter({ subsets: ['latin'] })
 // const anvir = localFont({
@@ -73,12 +76,6 @@ const inter = Inter({ subsets: ['latin'] })
 //   ]
 // })
 
-
-export const metadata = {
-  title: "Rafiki's Kitchen",
-  description: 'Artisanal sandwiches crafted with love and care',
-}
-
 export default function RootLayout({
   children,
 }: {
@@ -86,7 +83,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-
       <body className={`${inter.className} min-h-screen flex flex-col bg-stone-50`}>
         <Header />
         <main className="flex-grow">{children}</main>

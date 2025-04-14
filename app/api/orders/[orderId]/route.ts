@@ -4,7 +4,7 @@ import { ObjectId } from 'mongodb';
 
 export async function GET(
   request: Request,
-  { params }: { params: { orderId: string } }
+  { params }: any
 ) {
   try {
     const { orderId } = params;

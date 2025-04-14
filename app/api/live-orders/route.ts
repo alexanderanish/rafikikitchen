@@ -1,13 +1,23 @@
 import { NextResponse } from 'next/server'
 import { MongoClient, ObjectId } from 'mongodb'
 
+// Make sure MONGODB_URI is defined
 const uri = process.env.MONGODB_URI
-
 if (!uri) {
   throw new Error('MONGODB_URI is not defined')
 }
 
-const client = new MongoClient(uri)
+// Create a global MongoDB client that persists across requests
+let client: MongoClient | null = null
+
+async function getClient() {
+  if (!client) {
+    // We've already checked uri is not undefined above
+    client = new MongoClient(uri as string)
+    await client.connect()
+  }
+  return client
+}
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
@@ -18,18 +28,25 @@ export async function GET(request: Request) {
   }
 
   try {
-    await client.connect()
+    const client = await getClient()
     const database = client.db('rafiki_kitchen')
     const ordersCollection = database.collection('orders')
     
     const orders = await ordersCollection.find({ 'checkoutInfo.date': date }).toArray()
-    return NextResponse.json({ orders })
+    
+    // Return with no-cache headers
+    return NextResponse.json({ orders }, {
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      },
+    })
   } catch (error) {
     console.error('Database query error:', error)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
-  } finally {
-    await client.close()
   }
+  // Don't close the client after each request - it's reused
 }
 
 // export async function PUT(request: Request) {

@@ -1,27 +1,58 @@
-import { NextResponse } from 'next/server';
-import clientPromise from '../../../../../lib/mongodb';
-import { ObjectId } from 'mongodb';
+import { NextRequest, NextResponse } from 'next/server';
+import { MongoClient, ObjectId } from 'mongodb';
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
-  try {
-    const orderId = params.id; // Extract the dynamic ID from the route
+const uri = process.env.MONGODB_URI;
+if (!uri) {
+  throw new Error('MONGODB_URI is not defined');
+}
 
-    if (!orderId) {
-      return NextResponse.json({ success: false, error: 'Order ID is required' }, { status: 400 });
-    }
+// Create a global MongoDB client that persists across requests
+let client: MongoClient | null = null;
 
-    const client = await clientPromise;
-    const db = client.db('rafiki_kitchen');
-
-    const result = await db.collection('orders').deleteOne({ _id: new ObjectId(orderId) });
-
-    if (result.deletedCount === 0) {
-      return NextResponse.json({ success: false, error: 'Order not found' }, { status: 404 });
-    }
-
-    return NextResponse.json({ success: true, message: 'Order deleted successfully' });
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json({ success: false, error: 'An error occurred while deleting the order.' }, { status: 500 });
+async function getClient() {
+  if (!client) {
+    client = new MongoClient(uri as string);
+    await client.connect();
   }
+  return client;
+}
+
+// In Next.js 15, route segment config is required to access params properly
+export async function DELETE(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  try {
+    // Await params in Next.js 15
+    const params = await context.params;
+    const id = params.id;
+    
+    const client = await getClient();
+    const database = client.db('rafiki_kitchen');
+    const ordersCollection = database.collection('orders');
+    
+    // Convert the ID parameter to MongoDB ObjectId
+    const objectId = new ObjectId(id);
+    
+    // Delete the order document
+    const result = await ordersCollection.deleteOne({ _id: objectId });
+    
+    if (result.deletedCount === 0) {
+      return NextResponse.json(
+        { success: false, message: 'Order not found' }, 
+        { status: 404 }
+      );
+    }
+    
+    return NextResponse.json(
+      { success: true, message: 'Order deleted successfully' }
+    );
+  } catch (error) {
+    console.error('Failed to delete order:', error);
+    return NextResponse.json(
+      { success: false, message: 'Error deleting order' }, 
+      { status: 500 }
+    );
+  }
+  // Don't close the client - it's reused
 }

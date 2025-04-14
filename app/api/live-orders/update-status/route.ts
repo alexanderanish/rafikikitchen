@@ -1,15 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { MongoClient, ObjectId } from 'mongodb'
 
-
-
+// Make sure MONGODB_URI is defined
 const uri = process.env.MONGODB_URI
-
 if (!uri) {
   throw new Error('MONGODB_URI is not defined')
 }
 
-const client = new MongoClient(uri)
+// Create a global MongoDB client that persists across requests
+let client: MongoClient | null = null
+
+async function getClient() {
+  if (!client) {
+    // We've already checked uri is not undefined above
+    client = new MongoClient(uri as string)
+    await client.connect()
+  }
+  return client
+}
 
 // export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     export async function POST(request: NextRequest) {
@@ -21,7 +29,7 @@ const client = new MongoClient(uri)
           }
       
           // Connect to MongoDB
-          await client.connect()
+          const client = await getClient()
           const database = client.db('rafiki_kitchen') // Replace with your actual database name
           const orders = database.collection('orders')
           const objectId = new ObjectId(orderId)
@@ -49,7 +57,5 @@ const client = new MongoClient(uri)
         } catch (error) {
           console.error('Failed to update order status:', error)
           return NextResponse.json({ message: 'Internal server error' }, { status: 500 })
-        } finally {
-          await client.close()
         }
       }

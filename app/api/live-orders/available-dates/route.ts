@@ -1,20 +1,34 @@
 import { NextResponse } from 'next/server'
 import { MongoClient } from 'mongodb'
 
+// Make sure MONGODB_URI is defined
 const uri = process.env.MONGODB_URI
 if (!uri) {
   throw new Error('MONGODB_URI is not defined')
 }
-const client = new MongoClient(uri)
+
+// Create a global MongoDB client that persists across requests
+let client: MongoClient | null = null
+
+async function getClient() {
+  if (!client) {
+    // We've already checked uri is not undefined above
+    client = new MongoClient(uri as string)
+    await client.connect()
+  }
+  return client
+}
 
 export async function GET() {
   try {
-    await client.connect()
+    const client = await getClient()
     const database = client.db('rafiki_kitchen')
     const ordersCollection = database.collection('orders')
 
+    // Use a fresh query each time
     const dates = await ordersCollection.distinct('checkoutInfo.date')
-    // dates.sort((a, b) => new Date(b).getTime() - new Date(a).getTime()) // Sort dates in descending order
+    
+    // Sort dates in ascending order (oldest to newest)
     dates.sort((a, b) => {
       const [dayA, monthA, yearA] = a.split('-').map(Number);
       const [dayB, monthB, yearB] = b.split('-').map(Number);
@@ -24,18 +38,18 @@ export async function GET() {
     
       return dateA.getTime() - dateB.getTime(); 
     });
-    // console.log(dates, "dates")
 
-    // return NextResponse.json({ dates })
+    // Set cache control headers to prevent caching
     return NextResponse.json({ dates }, {
       headers: {
         'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
       },
     });
   } catch (error) {
     console.error('Database query error:', error)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
-  } finally {
-    await client.close()
   }
+  // Don't close the client after each request - it's reused
 }

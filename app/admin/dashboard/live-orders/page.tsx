@@ -27,6 +27,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import {WhatsAppDialog} from "@/components/WhatsappDialog";
+import { AvailabilityIndicator } from '@/components/AvailabilityIndicator'
 
 type Sandwich = {
   id: number
@@ -64,20 +65,29 @@ export default function LiveOrderManagement() {
   const [selectedDate, setSelectedDate] = useState<string>()
   const [availableDates, setAvailableDates] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [isRefreshingDates, setIsRefreshingDates] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
   const fetchAvailableDates = async () => {
     try {
-      const response = await fetch('/api/live-orders/available-dates', {
+      setIsRefreshingDates(true)
+      // Use a timestamp to bust the cache and force a fresh request
+      const timestamp = new Date().getTime()
+      const response = await fetch(`/api/live-orders/available-dates?t=${timestamp}`, {
         cache: "no-store", 
-        next: { revalidate: 0 },
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        },
       })
       if (!response.ok) throw new Error('Failed to fetch available dates')
       const data = await response.json()
       setAvailableDates(data.dates)
       if (data.dates.length > 0) {
-        // Ensure format consistency when setting selectedDate
-        setSelectedDate(format(parse(data.dates[data.dates.length - 1], 'dd-MM-yyyy', new Date()), 'dd-MM-yyyy'));
+        // Always select the most recent date (last in the array)
+        const latestDate = data.dates[data.dates.length - 1]
+        setSelectedDate(latestDate)
       }
     } catch (err) {
       console.error('Failed to fetch available dates:', err)
@@ -86,6 +96,8 @@ export default function LiveOrderManagement() {
         description: "Failed to fetch available dates",
         variant: "destructive",
       })
+    } finally {
+      setIsRefreshingDates(false)
     }
   }
 
@@ -96,7 +108,16 @@ export default function LiveOrderManagement() {
     setIsLoading(true)
     setError(null)
     try {
-      const response = await fetch(`/api/live-orders?date=${selectedDate}`)
+      // Use a timestamp to bust the cache
+      const timestamp = new Date().getTime()
+      const response = await fetch(`/api/live-orders?date=${selectedDate}&t=${timestamp}`, {
+        cache: "no-store",
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        },
+      })
       if (!response.ok) throw new Error('Failed to fetch orders')
       const data = await response.json()
       setOrders(data.orders)
@@ -115,15 +136,25 @@ export default function LiveOrderManagement() {
       return
     }
     fetchAvailableDates()
+
+    // Set up auto-refresh for available dates
+    const datesRefreshInterval = setInterval(() => {
+      fetchAvailableDates()
+    }, 5 * 60 * 1000) // Refresh available dates every 5 minutes
+
+    return () => clearInterval(datesRefreshInterval)
   }, [])
 
 
   useEffect(() => {
     fetchOrders()
-    // In a real application, you would set up a websocket or polling mechanism here
-    // const intervalId = setInterval(fetchOrders, 30000) // Refresh every 30 seconds
-    // return () => clearInterval(intervalId)
-
+    
+    // Set up auto-refresh for orders
+    const ordersRefreshInterval = setInterval(() => {
+      fetchOrders()
+    }, 60 * 1000) // Refresh orders every minute
+    
+    return () => clearInterval(ordersRefreshInterval)
   }, [selectedDate, selectedTimeSlot])
 
   const updateOrderStatus = async (orderId: string, newStatus: Order['status']) => {
@@ -330,9 +361,9 @@ export default function LiveOrderManagement() {
     <div className="container mx-auto py-10">
       {/* <h1 className="text-3xl font-bold mb-6">Live Order Management</h1> */}
       <div className="mb-6 flex items-center space-x-4">
-        <Select value={selectedDate}  onValueChange={setSelectedDate}>
+        <Select value={selectedDate} onValueChange={setSelectedDate}>
           <SelectTrigger className="w-[200px]">
-          <SelectValue>{selectedDate || "Select an order date"}</SelectValue>
+            <SelectValue>{selectedDate || "Select an order date"}</SelectValue>
           </SelectTrigger>
           <SelectContent>
             {availableDates.map((date) => (
@@ -342,9 +373,19 @@ export default function LiveOrderManagement() {
             ))}
           </SelectContent>
         </Select>
-       
         
+        <Button 
+          onClick={() => fetchAvailableDates()} 
+          variant="outline"
+          disabled={isRefreshingDates}
+        >
+          <RefreshCcw className={`mr-2 h-4 w-4 ${isRefreshingDates ? 'animate-spin' : ''}`} />
+          Refresh Dates
+        </Button>
 
+        {selectedDate && (
+          <AvailabilityIndicator date={selectedDate} />
+        )}
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="md:col-span-2">
@@ -355,8 +396,9 @@ export default function LiveOrderManagement() {
                 className="mb-4" 
                 onClick={() => fetchOrders()} 
                 variant="outline" 
+                disabled={isLoading}
               >
-                <RefreshCcw className="mr-2 h-4 w-4" />
+                <RefreshCcw className={`mr-2 h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
                 Refresh Orders
               </Button>
           </CardHeader>
