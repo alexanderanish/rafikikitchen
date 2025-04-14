@@ -42,9 +42,9 @@ export function OrderDetailsModal({
     }
   }, [order])
 
-  if (!editedOrder) return null
-
   const handleSave = async () => {
+    if (!editedOrder) return;
+    
     try {
       const token = localStorage.getItem("adminToken")
       if (!token) return
@@ -77,6 +77,14 @@ export function OrderDetailsModal({
       })
     }
   }
+
+  // Calculate total from cart items
+  const calculateTotal = () => {
+    if (!editedOrder?.cart) return 0
+    return editedOrder.cart.reduce((total, item) => total + (item.price * item.quantity), 0)
+  }
+
+  if (!editedOrder) return null
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -202,17 +210,17 @@ export function OrderDetailsModal({
           <div className="space-y-2">
             <Label>Items</Label>
             <div className="border rounded-md p-4">
-              {editedOrder.cart.map((item, index) => (
+              {editedOrder.cart?.map((item, index) => (
                 <div key={index} className="flex justify-between py-2">
                   <span>{item.name}</span>
                   <span>
-                    {item.quantity} x ${item.price} = $
+                    {item.quantity} x ₹{item.price} = ₹
                     {(item.quantity * item.price).toFixed(2)}
                   </span>
                 </div>
               ))}
               <div className="border-t pt-2 mt-2 font-semibold">
-                Total: ${editedOrder.total.toFixed(2)}
+                Total: ₹{calculateTotal().toFixed(2)}
               </div>
             </div>
           </div>

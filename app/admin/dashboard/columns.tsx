@@ -13,7 +13,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "../../../components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu"
 
 export type Order = {
   _id: string
@@ -75,11 +75,7 @@ export const columns: ColumnDef<Order>[] = [
     header: "Total",
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("total"))
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount)
-      return <div className="font-medium">{formatted}</div>
+      return <div className="font-medium">₹{amount.toFixed(2)}</div>
     },
   },
   {
@@ -154,7 +150,11 @@ export const columns: ColumnDef<Order>[] = [
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => {
-              const event = new CustomEvent('showOrderDetails', { detail: order });
+              const event = new CustomEvent('showOrderDetails', { 
+                detail: order,
+                bubbles: true,
+                composed: true
+              });
               window.dispatchEvent(event);
             }}>
               View order details

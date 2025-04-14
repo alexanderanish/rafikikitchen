@@ -4,7 +4,9 @@ import { ObjectId } from "mongodb"
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  props: {
+    params: Promise<{ id: string }>
+  }
 ) {
   try {
     const token = request.headers.get("authorization")?.split(" ")[1]
@@ -15,6 +17,7 @@ export async function PUT(
       )
     }
 
+    const params = await props.params
     const { id } = params
     const { status } = await request.json()
 

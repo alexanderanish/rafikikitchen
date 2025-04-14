@@ -249,7 +249,7 @@ export default function CashierPage() {
                     onClick={() => handleAddItem(item.id)}
                   >
                     <h3 className="font-medium">{item.name}</h3>
-                    <p className="text-gray-600">${item.price.toFixed(2)}</p>
+                    <p className="text-gray-600">₹{item.price.toFixed(2)}</p>
                     <p className={`text-sm ${available <= 5 ? "text-red-500" : "text-gray-500"}`}>
                       {available} available
                     </p>
@@ -317,7 +317,7 @@ export default function CashierPage() {
                     {selectedItems.map((item, index) => (
                       <tr key={index}>
                         <td className="px-4 py-2">{item.name}</td>
-                        <td className="px-4 py-2">${item.price.toFixed(2)}</td>
+                        <td className="px-4 py-2">₹{item.price.toFixed(2)}</td>
                         <td className="px-4 py-2">
                           <input
                             type="number"
@@ -327,7 +327,7 @@ export default function CashierPage() {
                             className="border rounded w-16 px-2 py-1"
                           />
                         </td>
-                        <td className="px-4 py-2">${(item.price * item.quantity).toFixed(2)}</td>
+                        <td className="px-4 py-2">₹{(item.price * item.quantity).toFixed(2)}</td>
                         <td className="px-4 py-2">
                           <button onClick={() => handleRemoveItem(index)} className="text-red-500 hover:text-red-700">
                             Remove
@@ -341,7 +341,7 @@ export default function CashierPage() {
                       <td colSpan={3} className="px-4 py-2 text-right font-medium">
                         Total:
                       </td>
-                      <td className="px-4 py-2 font-bold">${calculateTotal().toFixed(2)}</td>
+                      <td className="px-4 py-2 font-bold">₹{calculateTotal().toFixed(2)}</td>
                       <td></td>
                     </tr>
                   </tfoot>

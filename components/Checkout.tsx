@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { useMenuStore } from '@/app/store/menuStore'
 import dynamic from 'next/dynamic'
@@ -26,7 +26,7 @@ export default function Checkout() {
   const [mounted, setMounted] = useState(false)
   
   // Predefined date range - static to avoid hydration mismatch
-  const allPossibleDates = [
+  const allPossibleDates = useMemo(() => [
     { value: "10-04-2025", label: "Thursday, 10th April, 2025" },
     { value: "11-04-2025", label: "Friday, 11th April, 2025" },
     { value: "12-04-2025", label: "Saturday, 12th April, 2025" },
@@ -35,7 +35,7 @@ export default function Checkout() {
     { value: "15-04-2025", label: "Tuesday, 15th April, 2025" },
     { value: "16-04-2025", label: "Wednesday, 16th April, 2025" },
     { value: "17-04-2025", label: "Thursday, 17th April, 2025" }
-  ];
+  ], [])
   
   // Parse a date string in DD-MM-YYYY format
   const parseDate = (dateStr: string): Date | null => {
@@ -52,58 +52,35 @@ export default function Checkout() {
   
   // Function to filter dates based on cutoff times - only run on client
   const getAvailableDates = useCallback(() => {
-    // Return all dates during server-side rendering to avoid hydration mismatch
-    if (typeof window === 'undefined') return allPossibleDates;
-  
-    const now = new Date();
-    const today = new Date(now);
-    today.setHours(0, 0, 0, 0);
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
     
-    const currentHour = now.getHours();
-    const currentDay = now.getDay(); // 0 = Sunday, 6 = Saturday
-    
-    return allPossibleDates.filter(dateObj => {
-      const orderDate = parseDate(dateObj.value);
+    return allPossibleDates.filter(date => {
+      const orderDate = parseDate(date.value);
       if (!orderDate) return false;
       
-      // Reset to midnight for date comparison
-      orderDate.setHours(0, 0, 0, 0);
+      // Check if date is in the past
+      if (orderDate < today) {
+        return false;
+      }
       
-      // Don't allow ordering for past dates
-      if (orderDate < today) return false;
-      
-      const orderDay = orderDate.getDay();
-      
-      // For weekend orders (Saturday and Sunday)
-      if (orderDay === 0 || orderDay === 6) {
-        // Find the Friday before this weekend
-        const fridayBefore = new Date(orderDate);
-        fridayBefore.setDate(orderDate.getDate() - (orderDay === 0 ? 2 : 1));
-        fridayBefore.setHours(0, 0, 0, 0);
-        
-        // If today is past that Friday, or it is Friday but after 4pm
-        if (today > fridayBefore || 
-            (today.getTime() === fridayBefore.getTime() && currentDay === 5 && currentHour >= 16)) {
+      // Check if it's a weekend order (Saturday or Sunday)
+      if (orderDate.getDay() === 0 || orderDate.getDay() === 6) {
+        // Weekend orders must be placed by Friday 4PM
+        if (today.getDay() === 5 && today.getHours() >= 16) {
           return false;
         }
-      } 
-      // For weekday orders (Monday to Friday)
-      else {
-        // Find the day before
-        const dayBefore = new Date(orderDate);
-        dayBefore.setDate(orderDate.getDate() - 1);
-        dayBefore.setHours(0, 0, 0, 0);
-        
-        // If today is past the day before, or it is the day before but after 9pm
-        if (today > dayBefore || 
-            (today.getTime() === dayBefore.getTime() && currentHour >= 21)) {
+      } else {
+        // Weekday orders must be placed by 9PM the day before
+        if (orderDate.getDate() === tomorrow.getDate() && today.getHours() >= 21) {
           return false;
         }
       }
       
       return true;
     });
-  }, []);
+  }, [allPossibleDates]);
   
   // Update time slots based on selected date
   const updateTimeSlots = useCallback((dateStr: string) => {
@@ -135,7 +112,7 @@ export default function Checkout() {
         { value: '20:00', label: '08:00 PM' }
       ]);
     }
-  }, []);
+  }, [setTimeSlots]);
   
   // Initial setup and client-side validation
   useEffect(() => {
@@ -151,7 +128,7 @@ export default function Checkout() {
         updateTimeSlots(checkoutInfo.date);
       }
     }
-  }, []);
+  }, [cart.length, checkoutInfo, getAvailableDates, setCheckoutInfo, updateTimeSlots]);
   
   // Setup interval to periodically check date availability
   useEffect(() => {

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { toast } from "@/components/ui/use-toast"
@@ -9,21 +9,12 @@ import { columns, Order } from "./columns"
 import { OrderDetailsModal } from "./order-details-modal"
 
 export default function AdminDashboard() {
+  const router = useRouter()
   const [orders, setOrders] = useState<Order[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
-  const router = useRouter()
 
-  useEffect(() => {
-    const token = localStorage.getItem("adminToken")
-    if (!token) {
-      router.push("/admin/login")
-      return
-    }
-    fetchOrders()
-  }, [router])
-
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     const token = localStorage.getItem("adminToken")
     if (!token) {
       router.push("/admin/login")
@@ -40,7 +31,11 @@ export default function AdminDashboard() {
       }
 
       const data = await response.json()
-      setOrders(data)
+      if (data.success) {
+        setOrders(data.orders)
+      } else {
+        throw new Error(data.error || "Failed to fetch orders")
+      }
     } catch (error) {
       console.error("Error fetching orders:", error)
       toast({
@@ -51,7 +46,27 @@ export default function AdminDashboard() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [router])
+
+  useEffect(() => {
+    const token = localStorage.getItem("adminToken")
+    if (!token) {
+      router.push("/admin/login")
+      return
+    }
+    fetchOrders()
+
+    // Add event listener for showing order details
+    const handleShowOrderDetails = (event: CustomEvent) => {
+      setSelectedOrder(event.detail)
+    }
+
+    window.addEventListener('showOrderDetails', handleShowOrderDetails as EventListener)
+
+    return () => {
+      window.removeEventListener('showOrderDetails', handleShowOrderDetails as EventListener)
+    }
+  }, [router, fetchOrders])
 
   const handleExportCsv = async () => {
     const token = localStorage.getItem("adminToken")

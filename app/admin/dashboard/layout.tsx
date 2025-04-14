@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { LogOut, Menu, X } from "lucide-react";
 
@@ -21,7 +22,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <div className="hidden md:flex md:flex-col md:w-64 md:fixed md:inset-y-0 bg-white border-r">
         <div className="flex flex-col flex-1">
           <div className="flex items-center h-24 flex-shrink-0 px-4">
-            <img src="/logo.png" alt="Logo" className="h-8 w-auto" />
+            <Image src="/logo.png" alt="Logo" width={32} height={32} className="h-8 w-auto" />
           </div>
           <div className="flex-1 flex flex-col overflow-y-auto">
             <nav className="flex-1 px-4 py-4 space-y-1">
@@ -49,7 +50,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Mobile header */}
       <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b">
         <div className="flex items-center justify-between h-24 px-4">
-          <img src="/logo.png" alt="Logo" className="h-8 w-auto" />
+          <Image src="/logo.png" alt="Logo" width={32} height={32} className="h-8 w-auto" />
           <button onClick={() => setIsOpen(!isOpen)} className="p-2">
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>

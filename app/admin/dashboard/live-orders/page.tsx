@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -68,7 +68,7 @@ export default function LiveOrderManagement() {
   const [isRefreshingDates, setIsRefreshingDates] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
-  const fetchAvailableDates = async () => {
+  const fetchAvailableDates = useCallback(async () => {
     try {
       setIsRefreshingDates(true)
       // Use a timestamp to bust the cache and force a fresh request
@@ -99,9 +99,9 @@ export default function LiveOrderManagement() {
     } finally {
       setIsRefreshingDates(false)
     }
-  }
+  }, [])
 
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     if (!selectedDate || !availableDates.includes(selectedDate)) {
       return; // Do nothing if selectedDate is not available
     }
@@ -127,7 +127,7 @@ export default function LiveOrderManagement() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [selectedDate, availableDates])
 
   useEffect(() => {
     const token = localStorage.getItem('adminToken')
@@ -136,15 +136,14 @@ export default function LiveOrderManagement() {
       return
     }
     fetchAvailableDates()
-
+    
     // Set up auto-refresh for available dates
     const datesRefreshInterval = setInterval(() => {
       fetchAvailableDates()
     }, 5 * 60 * 1000) // Refresh available dates every 5 minutes
 
     return () => clearInterval(datesRefreshInterval)
-  }, [])
-
+  }, [router, fetchAvailableDates])
 
   useEffect(() => {
     fetchOrders()
@@ -155,7 +154,7 @@ export default function LiveOrderManagement() {
     }, 60 * 1000) // Refresh orders every minute
     
     return () => clearInterval(ordersRefreshInterval)
-  }, [selectedDate, selectedTimeSlot])
+  }, [selectedDate, selectedTimeSlot, fetchOrders])
 
   const updateOrderStatus = async (orderId: string, newStatus: Order['status']) => {
     try {
